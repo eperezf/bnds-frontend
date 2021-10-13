@@ -1,4 +1,5 @@
 <script>
+import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
@@ -19,7 +20,7 @@
     else {
       saving = true;
       saveText = "Guardando...";
-      const res = await fetch(`http://localhost:3001/offline/technology`, {
+      const res = await fetch(`${variables.apiEndpoint}/technology`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

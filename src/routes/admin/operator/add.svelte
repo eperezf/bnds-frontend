@@ -1,16 +1,17 @@
 <script>
+import { variables } from '$lib/variables';
 import { goto } from '$app/navigation';
 let combinedData = [];
 let technologyData = [];
 
 async function fetchData(){
-  const techRes = await fetch("http://localhost:3001/offline/technology");
+  const techRes = await fetch(`${variables.apiEndpoint}/technology`);
   const techData = await techRes.json();
 
-  const genRes = await fetch("http://localhost:3001/offline/generation");
+  const genRes = await fetch(`${variables.apiEndpoint}/generation`);
   const genData = await genRes.json();
 
-  const freqRes = await fetch("http://localhost:3001/offline/frequency");
+  const freqRes = await fetch(`${variables.apiEndpoint}/frequency`);
   const freqData = await freqRes.json();
 
 
@@ -95,7 +96,7 @@ async function saveOperator(){
   }
 
   // Do the POST
-  const res = await fetch(`http://localhost:3001/offline/operator`, {
+  const res = await fetch(`${variables.apiEndpoint}/operator`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',

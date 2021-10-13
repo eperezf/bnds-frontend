@@ -1,10 +1,11 @@
 <script>
+import { variables } from '$lib/variables';
   import Row from '$lib/row.svelte';
   import { goto } from '$app/navigation';
 
   async function fetchData(){
     console.log("Mounted! Listing technologies");
-    const res = await fetch("http://localhost:3001/offline/technology");
+    const res = await fetch(`${variables.apiEndpoint}/technology`);
     const data = await res.json();
 
     if (res.ok) {
@@ -20,7 +21,7 @@
   async function handleDelete(event){
     console.log("HANDLING DELETE!");
     console.log(event.detail);
-    const res = await fetch(`http://localhost:3001/offline/technology/${event.detail.id}`, {
+    const res = await fetch(`${variables.apiEndpoint}/technology/${event.detail.id}`, {
       method: 'DELETE'
     })
     console.log(res);

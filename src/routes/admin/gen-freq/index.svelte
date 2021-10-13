@@ -1,13 +1,12 @@
 <script>
+  import { variables } from '$lib/variables';
   import Row from '$lib/row.svelte';
   import { goto } from '$app/navigation';
 
   async function fetchGenData(){
-    const res = await fetch("http://localhost:3001/offline/generation");
+    const res = await fetch(`${variables.apiEndpoint}/generation`);
     const data = await res.json();
-
     if (res.ok) {
-      console.log(data);
       return data;
     } else {
       throw new Error(data);
@@ -17,22 +16,19 @@
   let genPromise = fetchGenData();
 
   async function handleGenDelete(event){
-    console.log("HANDLING DELETE!");
-    console.log(event.detail);
-    const res = await fetch(`http://localhost:3001/offline/${event.detail.url}/${event.detail.id}`, {
+    const res = await fetch(`${variables.apiEndpoint}/${event.detail.url}/${event.detail.id}`, {
       method: 'DELETE'
     });
     console.log(res);
     if (res.status != 200) {
       console.log("ERROR DELETING");
     } else {
-      console.log("ALL OK");
       genPromise = await fetchGenData();
     }
   }
 
   async function fetchFreqData(){
-    const res = await fetch("http://localhost:3001/offline/frequency");
+    const res = await fetch(`${variables.apiEndpoint}/frequency`);
     const data = await res.json();
 
     if (res.ok) {
@@ -48,10 +44,9 @@
   async function handleFreqDelete(event){
     console.log("HANDLING DELETE!");
     console.log(event.detail);
-    const res = await fetch(`http://localhost:3001/offline/frequency/${event.detail.id}`, {
+    const res = await fetch(`${variables.apiEndpoint}/frequency/${event.detail.id}`, {
       method: 'DELETE'
     });
-    console.log(res);
     if (res.status != 200) {
       console.log("ERROR DELETING");
     } else {

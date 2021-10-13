@@ -1,4 +1,5 @@
 <script>
+  import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
@@ -13,7 +14,7 @@
   let generation;
 
   async function fetchGenData(){
-    const res = await fetch("http://localhost:3001/offline/generation");
+    const res = await fetch(`${variables.apiEndpoint}/generation`);
     const data = await res.json();
 
     if (res.ok) {
@@ -35,7 +36,7 @@
     else {
       saving = true;
       saveText = "Guardando...";
-      const res = await fetch(`http://localhost:3001/offline/frequency`, {
+      const res = await fetch(`${variables.apiEndpoint}/frequency`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

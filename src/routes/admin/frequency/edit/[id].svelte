@@ -1,4 +1,5 @@
 <script>
+  import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
@@ -22,7 +23,7 @@
 
   let genPromise = fetchGenData();
   async function fetchGenData(){
-    const genListRes = await fetch("http://localhost:3001/offline/generation");
+    const genListRes = await fetch(`${variables.apiEndpoint}/generation`);
     const genListData = await genListRes.json();
 
     if (genListRes.ok) {
@@ -35,7 +36,7 @@
 
   onMount(async()=>{
     // Get the frequency info
-    const freqRes = await fetch(`http://localhost:3001/offline/frequency/${$page.params.id}`);
+    const freqRes = await fetch(`${variables.apiEndpoint}/frequency/${$page.params.id}`);
 		freqData = await freqRes.json();
     if (freqRes.status != 200) {
       console.log("ERROR");
@@ -51,7 +52,7 @@
     }
     if (!error) {
       // Get the generation info from the frequency
-      const genRes = await fetch(`http://localhost:3001/offline/generation/${genId}`);
+      const genRes = await fetch(`${variables.apiEndpoint}/generation/${genId}`);
   		genData = await genRes.json();
       if (genRes.status != 200) {
         console.log("ERROR");
@@ -77,7 +78,7 @@
     else {
       saving = true;
       saveText = "Guardando...";
-      const res = await fetch(`http://localhost:3001/offline/frequency/${$page.params.id}`, {
+      const res = await fetch(`${variables.apiEndpoint}/frequency/${$page.params.id}`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',

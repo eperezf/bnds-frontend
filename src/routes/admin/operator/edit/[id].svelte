@@ -1,4 +1,5 @@
 <script>
+  import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
@@ -19,13 +20,13 @@
 
   async function fetchData(){
     // First we get the basic information for the form
-    const techRes = await fetch("http://localhost:3001/offline/technology");
+    const techRes = await fetch(`${variables.apiEndpoint}/technology`);
     const techData = await techRes.json();
 
-    const genRes = await fetch("http://localhost:3001/offline/generation");
+    const genRes = await fetch(`${variables.apiEndpoint}/generation`);
     const genData = await genRes.json();
 
-    const freqRes = await fetch("http://localhost:3001/offline/frequency");
+    const freqRes = await fetch(`${variables.apiEndpoint}/frequency`);
     const freqData = await freqRes.json();
 
     let genNum = 0;
@@ -52,7 +53,7 @@
     combinedData.sort((a,b)=>(a.name>b.name?1:-1));
 
     // Then we get the operator data
-    const res = await fetch(`http://localhost:3001/offline/operator/${$page.params.id}`);
+    const res = await fetch(`${variables.apiEndpoint}/operator/${$page.params.id}`);
 		let data = await res.json();
     if (res.status != 200) {
       console.log("ERROR");
@@ -139,7 +140,7 @@
 
     //saving = true;
     saveText = "Guardando...";
-    const res = await fetch(`http://localhost:3001/offline/operator/${$page.params.id}`, {
+    const res = await fetch(`${variables.apiEndpoint}/operator/${$page.params.id}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',

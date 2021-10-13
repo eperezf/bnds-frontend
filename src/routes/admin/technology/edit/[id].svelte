@@ -1,4 +1,5 @@
 <script>
+import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
@@ -12,7 +13,7 @@
   let toastMsg = "";
 
   onMount(async()=>{
-    const res = await fetch(`http://localhost:3001/offline/technology/${$page.params.id}`);
+    const res = await fetch(`${variables.apiEndpoint}/technology/${$page.params.id}`);
 		data = await res.json();
     if (res.status != 200) {
       console.log("ERROR");
@@ -31,7 +32,7 @@
     else {
       saving = true;
       saveText = "Guardando...";
-      const res = await fetch(`http://localhost:3001/offline/technology/${$page.params.id}`, {
+      const res = await fetch(`${variables.apiEndpoint}/technology/${$page.params.id}`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
