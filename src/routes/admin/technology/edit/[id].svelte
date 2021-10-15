@@ -4,6 +4,8 @@ import { variables } from '$lib/variables';
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
   import { goto } from '$app/navigation';
+  import { checkToken } from '$lib/checkToken'
+  import { getCookie } from '$lib/getCookie';
   let name = "Cargando...";
   let enabled = false;
   let data;
@@ -12,22 +14,8 @@ import { variables } from '$lib/variables';
   let showToast = false;
   let toastMsg = "";
 
-  function getCookie(cName) {
-    const name = cName + "=";
-    const cDecoded = decodeURIComponent(document.cookie); //to be careful
-    const cArr = cDecoded.split('; ');
-    let res;
-    cArr.forEach(val => {
-      if (val.indexOf(name) === 0) res = val.substring(name.length);
-    });
-    return res;
-  }
-
   onMount(async()=>{
-    let idCookie = getCookie("idToken");
-    if (!idCookie) {
-      goto('/admin/login');
-    }
+    loggedIn = await checkToken();
 
     const res = await fetch(
       `${variables.apiEndpoint}/technology/${$page.params.id}`,
@@ -76,6 +64,7 @@ import { variables } from '$lib/variables';
   }
 </script>
 <main>
+{#if loggedIn}
   <div class="col-span-1 p-2">
     <p class="text-white text-2xl text-center">Editar Tecnología</p>
     <form on:submit|preventDefault={saveGeneration} class="grid grid-cols-3 grid-flow-col">
@@ -90,4 +79,5 @@ import { variables } from '$lib/variables';
       </div>
     </form>
   </div>
+{/if}
 </main>

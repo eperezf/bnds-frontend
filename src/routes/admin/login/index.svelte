@@ -2,22 +2,12 @@
   import { variables } from '$lib/variables';
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { getCookie } from '$lib/getCookie';
   let email;
   let password;
   let loggingIn = false;
   let loginText = "Iniciar Sesión";
   let notAuthorized = false;
-
-  function getCookie(cName) {
-    const name = cName + "=";
-    const cDecoded = decodeURIComponent(document.cookie); //to be careful
-    const cArr = cDecoded.split('; ');
-    let res;
-    cArr.forEach(val => {
-      if (val.indexOf(name) === 0) res = val.substring(name.length);
-    });
-    return res;
-  }
 
   onMount(async()=>{
     let idCookie = getCookie("idToken");
@@ -75,7 +65,7 @@
     <input type="password" id="password" class="rounded-lg text-black mt-2" bind:value={password}>
     <button type="submit" class=" w-48 mx-auto mt-4 rounded-lg p-2 bg-green-600 hover:bg-green-500 shadow transition-all text-white" disabled={loggingIn}>{loginText}</button>
     {#if notAuthorized}
-    <p class="text-red-600 text-center mt-4">Correo o contraseña incorrecta</p>
+      <p class="text-red-600 text-center mt-4">Correo o contraseña incorrecta</p>
     {:else}
     {/if}
   </div>

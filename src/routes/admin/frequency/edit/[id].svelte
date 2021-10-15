@@ -4,17 +4,8 @@
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
   import { goto } from '$app/navigation';
-
-  function getCookie(cName) {
-    const name = cName + "=";
-    const cDecoded = decodeURIComponent(document.cookie); //to be careful
-    const cArr = cDecoded.split('; ');
-    let res;
-    cArr.forEach(val => {
-      if (val.indexOf(name) === 0) res = val.substring(name.length);
-    });
-    return res;
-  }
+  import { checkToken } from '$lib/checkToken'
+  import { getCookie } from '$lib/getCookie';
 
   let freqName = "Cargando...";
   let genName = "Cargando...";
@@ -31,6 +22,7 @@
 
   let error = false;
   let orphanFrequency = false;
+  let loggedIn = false;
 
   let genPromise = fetchGenData();
   async function fetchGenData(){
@@ -53,10 +45,7 @@
   }
 
   onMount(async()=>{
-    let idCookie = getCookie("idToken");
-    if (!idCookie) {
-      goto('/admin/login');
-    }
+    loggedIn = await checkToken();
     // Get the frequency info
     const freqRes = await fetch(
       `${variables.apiEndpoint}/frequency/${$page.params.id}`,
@@ -136,6 +125,7 @@
   }
 </script>
 <main>
+{#if loggedIn}
   <div class="col-span-1 p-2">
     <p class="text-white text-2xl text-center">Editar Frecuencia</p>
     <form on:submit|preventDefault={saveGeneration} class="grid grid-cols-3 grid-flow-col">
@@ -164,4 +154,5 @@
       </div>
     </form>
   </div>
+{/if}
 </main>

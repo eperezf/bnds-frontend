@@ -4,6 +4,8 @@
   import { page } from '$app/stores';
   import Toast from '$lib/toast.svelte';
   import { goto } from '$app/navigation';
+  import { checkToken } from '$lib/checkToken'
+  import { getCookie } from '$lib/getCookie';
   let name;
   let enabled = false;
   let data;
@@ -12,24 +14,11 @@
   let showToast = false;
   let toastMsg = "";
   let generation;
+  let loggedIn = false;
 
   onMount(async()=>{
-    let idCookie = getCookie("idToken");
-    if (!idCookie) {
-      goto('/admin/login');
-    }
+    loggedIn = await checkToken();
   });
-
-  function getCookie(cName) {
-    const name = cName + "=";
-    const cDecoded = decodeURIComponent(document.cookie); //to be careful
-    const cArr = cDecoded.split('; ');
-    let res;
-    cArr.forEach(val => {
-      if (val.indexOf(name) === 0) res = val.substring(name.length);
-    });
-    return res;
-  }
 
   async function fetchGenData(){
     const res = await fetch(
@@ -73,7 +62,7 @@
             generation:generation,
             enabled: enabled
           })
-      })
+      });
       console.log(res);
       if (res.status == 200) {
         saveText = "Guardado!";
@@ -85,6 +74,7 @@
   }
 </script>
 <main>
+{#if loggedIn}
   <div class="col-span-1 p-2">
     <p class="text-white text-2xl text-center">Crear Frecuencia</p>
     <form on:submit|preventDefault={saveFrequency} class="grid grid-cols-3 grid-flow-col">
@@ -110,4 +100,5 @@
       </div>
     </form>
   </div>
+{/if}
 </main>

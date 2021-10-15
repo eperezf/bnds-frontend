@@ -1,25 +1,14 @@
 <script>
-import { variables } from '$lib/variables';
+  import { variables } from '$lib/variables';
   import Row from '$lib/row.svelte';
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
-
-  function getCookie(cName) {
-    const name = cName + "=";
-    const cDecoded = decodeURIComponent(document.cookie); //to be careful
-    const cArr = cDecoded.split('; ');
-    let res;
-    cArr.forEach(val => {
-      if (val.indexOf(name) === 0) res = val.substring(name.length);
-    });
-    return res;
-  }
+  import { checkToken } from '$lib/checkToken';
+  import { getCookie } from '$lib/getCookie';
+  let loggedIn = false;
 
   onMount(async()=>{
-    let idCookie = getCookie("idToken");
-    if (!idCookie) {
-      goto('/admin/login');
-    }
+    loggedIn = await checkToken();
   });
 
   async function fetchData(){
@@ -66,6 +55,7 @@ import { variables } from '$lib/variables';
   }
 </script>
 <main>
+{#if loggedIn}
   <h1 class="text-center">Tecnologías</h1>
   <div class="w-100 h-100 rounded-lg bg-gray-700 p-4 mt-2 shadow-md">
     <a href="/admin/technology/add"><button class="rounded-lg bg-green-600 p-2 mb-4">Agregar Tecnología</button></a>
@@ -91,5 +81,5 @@ import { variables } from '$lib/variables';
       <p class="text-red-600">{error.message}</p>
     {/await}
   </div>
-
+{/if}
 </main>

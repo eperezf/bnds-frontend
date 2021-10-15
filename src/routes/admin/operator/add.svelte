@@ -2,25 +2,13 @@
 import { variables } from '$lib/variables';
 import { goto } from '$app/navigation';
 import { onMount } from 'svelte';
+import { checkToken } from '$lib/checkToken';
+import { getCookie } from '$lib/getCookie';
 let combinedData = [];
 let technologyData = [];
-
-function getCookie(cName) {
-  const name = cName + "=";
-  const cDecoded = decodeURIComponent(document.cookie); //to be careful
-  const cArr = cDecoded.split('; ');
-  let res;
-  cArr.forEach(val => {
-    if (val.indexOf(name) === 0) res = val.substring(name.length);
-  });
-  return res;
-}
-
+let loggedIn = false;
 onMount(async()=>{
-  let idCookie = getCookie("idToken");
-  if (!idCookie) {
-    goto('/admin/login');
-  }
+loggedIn = await checkToken();
 });
 
 async function fetchData(){
@@ -163,6 +151,7 @@ async function saveOperator(){
 </script>
 
 <main class="">
+{#if loggedIn}
   <div class="col-span-1">
     <p class="text-white text-2xl text-center">Crear Operadora</p>
   </div>
@@ -240,4 +229,5 @@ async function saveOperator(){
       {/await}
     </div>
   </form>
+{/if}
 </main>

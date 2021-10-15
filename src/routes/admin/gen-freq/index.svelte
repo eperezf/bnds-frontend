@@ -3,30 +3,11 @@
   import Row from '$lib/row.svelte';
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
+  import { checkToken } from '$lib/checkToken';
+  import { getCookie } from '$lib/getCookie';
+  let loggedIn = false;
   onMount(async()=>{
-    let idCookie = getCookie("idToken");
-    if (!idCookie) {
-      goto('/admin/login');
-    }
-  });
-
-
-  function getCookie(cName) {
-    const name = cName + "=";
-    const cDecoded = decodeURIComponent(document.cookie); //to be careful
-    const cArr = cDecoded.split('; ');
-    let res;
-    cArr.forEach(val => {
-      if (val.indexOf(name) === 0) res = val.substring(name.length);
-    });
-    return res;
-  }
-
-  onMount(async()=>{
-    let idCookie = getCookie("idToken");
-    if (!idCookie) {
-      goto('/admin/login');
-    }
+    loggedIn = await checkToken();
   });
 
   async function fetchGenData(){
@@ -103,6 +84,7 @@
 
 </script>
 <main>
+{#if loggedIn}
   <div class="col-span-10 rounded-lg bg-gray-800 h-full p-4 antialiased text-white grid grid-cols-2">
     <div class=" col-span-1 p-2">
       <p class="text-white text-2xl text-center">Generaciones</p>
@@ -160,4 +142,5 @@
       </div>
     </div>
   </div>
+{/if}
 </main>
