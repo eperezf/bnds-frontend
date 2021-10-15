@@ -13,6 +13,24 @@
   let toastMsg = "";
   let generation;
 
+  onMount(async()=>{
+    let idCookie = getCookie("idToken");
+    if (!idCookie) {
+      goto('/admin/login');
+    }
+  });
+
+  function getCookie(cName) {
+    const name = cName + "=";
+    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+    const cArr = cDecoded.split('; ');
+    let res;
+    cArr.forEach(val => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    });
+    return res;
+  }
+
   async function fetchGenData(){
     const res = await fetch(`${variables.apiEndpoint}/generation`);
     const data = await res.json();

@@ -1,9 +1,29 @@
 <script>
   import { variables } from '$lib/variables';
+  import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
   let email;
   let password;
   let loggingIn = false;
   let loginText = "Iniciar Sesión";
+
+  function getCookie(cName) {
+    const name = cName + "=";
+    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+    const cArr = cDecoded.split('; ');
+    let res;
+    cArr.forEach(val => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    });
+    return res;
+  }
+
+  onMount(async()=>{
+    let idCookie = getCookie("idToken");
+    if (idCookie) {
+      goto('/admin');
+    }
+  });
 
   async function doLogin(){
     loggingIn = true;
@@ -24,13 +44,17 @@
     }).then(
       response => response.json()
     );
-    console.log(res);
-    document.cookie = "idToken="+res.result.idToken;
-    document.cookie = "accessToken="+res.result.accessToken;
-    document.cookie = "refreshToken="+res.result.refreshToken;
-    if (res.error = true) {
+
+    if (res.error == true) {
+      console.log("ERROR");
       loggingIn = false;
       loginText = "Iniciar sesión"
+    } else {
+      console.log("ALL OK");
+      document.cookie = "idToken="+res.result.idToken+";path=/";
+      document.cookie = "accessToken="+res.result.accessToken+";path=/";
+      document.cookie = "refreshToken="+res.result.refreshToken+";path=/";
+      goto('/admin');
     }
 
 

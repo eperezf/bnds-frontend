@@ -2,6 +2,13 @@
   import { variables } from '$lib/variables';
   import Row from '$lib/row.svelte';
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+  onMount(async()=>{
+    let idCookie = getCookie("idToken");
+    if (!idCookie) {
+      goto('/admin/login');
+    }
+  });
 
 
   function getCookie(cName) {
@@ -15,9 +22,22 @@
     return res;
   }
 
+  onMount(async()=>{
+    let idCookie = getCookie("idToken");
+    if (!idCookie) {
+      goto('/admin/login');
+    }
+  });
 
   async function fetchGenData(){
-    const res = await fetch(`${variables.apiEndpoint}/generation`);
+    const res = await fetch(
+      `${variables.apiEndpoint}/generation`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const data = await res.json();
     if (res.ok) {
       return data;
@@ -30,7 +50,10 @@
 
   async function handleGenDelete(event){
     const res = await fetch(`${variables.apiEndpoint}/${event.detail.url}/${event.detail.id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'authorization': 'Bearer ' + getCookie("idToken")
+      }
     });
     console.log(res);
     if (res.status != 200) {
@@ -45,7 +68,7 @@
       `${variables.apiEndpoint}/frequency`,
       {
         headers: {
-          'authorization': 'Bearer ' + getCookie("accessToken")
+          'authorization': 'Bearer ' + getCookie("idToken")
         }
       }
     );

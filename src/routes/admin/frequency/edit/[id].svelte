@@ -5,6 +5,17 @@
   import Toast from '$lib/toast.svelte';
   import { goto } from '$app/navigation';
 
+  function getCookie(cName) {
+    const name = cName + "=";
+    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+    const cArr = cDecoded.split('; ');
+    let res;
+    cArr.forEach(val => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    });
+    return res;
+  }
+
   let freqName = "Cargando...";
   let genName = "Cargando...";
   let genId;
@@ -35,6 +46,11 @@
   }
 
   onMount(async()=>{
+    let idCookie = getCookie("idToken");
+    if (!idCookie) {
+      goto('/admin/login');
+    }
+  });
     // Get the frequency info
     const freqRes = await fetch(`${variables.apiEndpoint}/frequency/${$page.params.id}`);
 		freqData = await freqRes.json();

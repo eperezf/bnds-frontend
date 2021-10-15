@@ -2,10 +2,36 @@
 import { variables } from '$lib/variables';
   import Row from '$lib/row.svelte';
   import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+
+  function getCookie(cName) {
+    const name = cName + "=";
+    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+    const cArr = cDecoded.split('; ');
+    let res;
+    cArr.forEach(val => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    });
+    return res;
+  }
+
+  onMount(async()=>{
+    let idCookie = getCookie("idToken");
+    if (!idCookie) {
+      goto('/admin/login');
+    }
+  });
 
   async function fetchData(){
     console.log("Mounted! Listing technologies");
-    const res = await fetch(`${variables.apiEndpoint}/technology`);
+    const res = await fetch(
+      `${variables.apiEndpoint}/technology`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const data = await res.json();
 
     if (res.ok) {
@@ -21,9 +47,15 @@ import { variables } from '$lib/variables';
   async function handleDelete(event){
     console.log("HANDLING DELETE!");
     console.log(event.detail);
-    const res = await fetch(`${variables.apiEndpoint}/technology/${event.detail.id}`, {
-      method: 'DELETE'
-    })
+    const res = await fetch(
+      `${variables.apiEndpoint}/technology/${event.detail.id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     console.log(res);
     if (res.status != 200) {
       console.log("ERROR DELETING");
