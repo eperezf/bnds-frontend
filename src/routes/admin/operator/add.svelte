@@ -24,13 +24,34 @@ onMount(async()=>{
 });
 
 async function fetchData(){
-  const techRes = await fetch(`${variables.apiEndpoint}/technology`);
+  const techRes = await fetch(`
+    ${variables.apiEndpoint}/technology`,
+    {
+      headers: {
+        'authorization': 'Bearer ' + getCookie("idToken")
+      }
+    }
+  );
   const techData = await techRes.json();
 
-  const genRes = await fetch(`${variables.apiEndpoint}/generation`);
+  const genRes = await fetch(
+    `${variables.apiEndpoint}/generation`,
+    {
+      headers: {
+        'authorization': 'Bearer ' + getCookie("idToken")
+      }
+    }
+  );
   const genData = await genRes.json();
 
-  const freqRes = await fetch(`${variables.apiEndpoint}/frequency`);
+  const freqRes = await fetch(
+    `${variables.apiEndpoint}/frequency`,
+    {
+      headers: {
+        'authorization': 'Bearer ' + getCookie("idToken")
+      }
+    }
+  );
   const freqData = await freqRes.json();
 
 
@@ -119,7 +140,8 @@ async function saveOperator(){
     method: 'POST',
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'authorization': 'Bearer ' + getCookie("idToken")
     },
     body: JSON.stringify({
       name: opName,

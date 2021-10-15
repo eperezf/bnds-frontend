@@ -88,7 +88,10 @@
     console.log("HANDLING DELETE!");
     console.log(event.detail);
     const res = await fetch(`${variables.apiEndpoint}/frequency/${event.detail.id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'authorization': 'Bearer ' + getCookie("idToken")
+      }
     });
     if (res.status != 200) {
       console.log("ERROR DELETING");

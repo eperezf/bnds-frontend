@@ -29,7 +29,14 @@ import { variables } from '$lib/variables';
       goto('/admin/login');
     }
 
-    const res = await fetch(`${variables.apiEndpoint}/technology/${$page.params.id}`);
+    const res = await fetch(
+      `${variables.apiEndpoint}/technology/${$page.params.id}`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
 		data = await res.json();
     if (res.status != 200) {
       console.log("ERROR");
@@ -52,7 +59,8 @@ import { variables } from '$lib/variables';
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'authorization': 'Bearer ' + getCookie("idToken")
         },
         body: JSON.stringify({
             name: name,

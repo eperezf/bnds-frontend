@@ -6,6 +6,7 @@
   let password;
   let loggingIn = false;
   let loginText = "Iniciar Sesión";
+  let notAuthorized = false;
 
   function getCookie(cName) {
     const name = cName + "=";
@@ -26,11 +27,11 @@
   });
 
   async function doLogin(){
+    notAuthorized = false;
     loggingIn = true;
     loginText = "Iniciando sesión..."
-    console.log(email);
-    console.log(password);
-
+    //`${variables.apiEndpoint}/login`
+    //`http://localhost:3001/offline/login`
     const res = await fetch(`${variables.apiEndpoint}/login`, {
       method: 'POST',
       headers: {
@@ -44,9 +45,13 @@
     }).then(
       response => response.json()
     );
-
     if (res.error == true) {
       console.log("ERROR");
+      if (res.message == 'NotAuthorizedException') {
+        notAuthorized = true;
+      } else if (res.message == "PasswordChangeRequired") {
+        goto('https://bnds-dev.auth.us-east-1.amazoncognito.com/login?client_id=50oh16f01ussuagolnvaer449h&response_type=code&scope=email+openid&redirect_uri=https://dev.bnds.cl/admin/login')
+      }
       loggingIn = false;
       loginText = "Iniciar sesión"
     } else {
@@ -69,6 +74,10 @@
     <label for="password" class="text-center mt-2 text-white">Contraseña</label>
     <input type="password" id="password" class="rounded-lg text-black mt-2" bind:value={password}>
     <button type="submit" class=" w-48 mx-auto mt-4 rounded-lg p-2 bg-green-600 hover:bg-green-500 shadow transition-all text-white" disabled={loggingIn}>{loginText}</button>
+    {#if notAuthorized}
+    <p class="text-red-600 text-center mt-4">Correo o contraseña incorrecta</p>
+    {:else}
+    {/if}
   </div>
 </form>
 </main>

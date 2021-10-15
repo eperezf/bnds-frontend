@@ -38,13 +38,34 @@
 
   async function fetchData(){
     // First we get the basic information for the form
-    const techRes = await fetch(`${variables.apiEndpoint}/technology`);
+    const techRes = await fetch(
+      `${variables.apiEndpoint}/technology`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const techData = await techRes.json();
 
-    const genRes = await fetch(`${variables.apiEndpoint}/generation`);
+    const genRes = await fetch(
+      `${variables.apiEndpoint}/generation`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const genData = await genRes.json();
 
-    const freqRes = await fetch(`${variables.apiEndpoint}/frequency`);
+    const freqRes = await fetch(
+      `${variables.apiEndpoint}/frequency`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const freqData = await freqRes.json();
 
     let genNum = 0;
@@ -71,7 +92,14 @@
     combinedData.sort((a,b)=>(a.name>b.name?1:-1));
 
     // Then we get the operator data
-    const res = await fetch(`${variables.apiEndpoint}/operator/${$page.params.id}`);
+    const res = await fetch(
+      `${variables.apiEndpoint}/operator/${$page.params.id}`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
 		let data = await res.json();
     if (res.status != 200) {
       console.log("ERROR");
@@ -162,7 +190,8 @@
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'authorization': 'Bearer ' + getCookie("idToken")
       },
       body: JSON.stringify({
         name: operatorData.name,

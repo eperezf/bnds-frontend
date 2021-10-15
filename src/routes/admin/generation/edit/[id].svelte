@@ -28,8 +28,15 @@
     if (!idCookie) {
       goto('/admin/login');
     }
-  });
-    const res = await fetch(`${variables.apiEndpoint}/generation/${$page.params.id}`);
+
+    const res = await fetch(
+      `${variables.apiEndpoint}/generation/${$page.params.id}`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
 		data = await res.json();
     if (res.status != 200) {
       console.log("ERROR");

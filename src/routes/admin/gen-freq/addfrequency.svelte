@@ -32,7 +32,14 @@
   }
 
   async function fetchGenData(){
-    const res = await fetch(`${variables.apiEndpoint}/generation`);
+    const res = await fetch(
+      `${variables.apiEndpoint}/generation`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const data = await res.json();
 
     if (res.ok) {
@@ -58,7 +65,8 @@
         method: 'POST',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'authorization': 'Bearer ' + getCookie("idToken")
         },
         body: JSON.stringify({
             name: name,

@@ -23,7 +23,14 @@ import { variables } from '$lib/variables';
   });
 
   async function fetchData(){
-    const res = await fetch(`${variables.apiEndpoint}/operator`);
+    const res = await fetch(
+      `${variables.apiEndpoint}/operator`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const data = await res.json();
     if (res.ok) {
       console.log(data);
@@ -38,9 +45,15 @@ import { variables } from '$lib/variables';
   async function handleDelete(event){
     console.log("HANDLING DELETE!");
     console.log(event.detail);
-    const res = await fetch(`${variables.apiEndpoint}/operator/${event.detail.id}`, {
-      method: 'DELETE'
-    });
+    const res = await fetch(
+      `${variables.apiEndpoint}/operator/${event.detail.id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     console.log(res);
     if (res.status != 200) {
       console.log("ERROR DELETING");

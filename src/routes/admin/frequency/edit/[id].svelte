@@ -34,7 +34,14 @@
 
   let genPromise = fetchGenData();
   async function fetchGenData(){
-    const genListRes = await fetch(`${variables.apiEndpoint}/generation`);
+    const genListRes = await fetch(
+      `${variables.apiEndpoint}/generation`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
     const genListData = await genListRes.json();
 
     if (genListRes.ok) {
@@ -50,9 +57,15 @@
     if (!idCookie) {
       goto('/admin/login');
     }
-  });
     // Get the frequency info
-    const freqRes = await fetch(`${variables.apiEndpoint}/frequency/${$page.params.id}`);
+    const freqRes = await fetch(
+      `${variables.apiEndpoint}/frequency/${$page.params.id}`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
 		freqData = await freqRes.json();
     if (freqRes.status != 200) {
       console.log("ERROR");
@@ -68,7 +81,14 @@
     }
     if (!error) {
       // Get the generation info from the frequency
-      const genRes = await fetch(`${variables.apiEndpoint}/generation/${genId}`);
+      const genRes = await fetch(
+        `${variables.apiEndpoint}/generation/${genId}`,
+        {
+          headers: {
+            'authorization': 'Bearer ' + getCookie("idToken")
+          }
+        }
+      );
   		genData = await genRes.json();
       if (genRes.status != 200) {
         console.log("ERROR");
@@ -98,7 +118,8 @@
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'authorization': 'Bearer ' + getCookie("idToken")
         },
         body: JSON.stringify({
             name: freqName,
