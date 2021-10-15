@@ -2,7 +2,6 @@
   import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import Toast from '$lib/toast.svelte';
   import { goto } from '$app/navigation';
   import { checkToken } from '$lib/checkToken'
   import { getCookie } from '$lib/getCookie';
@@ -84,6 +83,7 @@
         <label for="generation" class="text-center mt-2">Generación</label>
         <select id="generation" class="rounded-lg text-black mt-2" bind:value={generation}>
           {#await genPromise}
+            <option value="loading" disabled>Cargando...</option>
           {:then items}
             {#each items.generations as generation}
               <option value={generation.id}>{generation.name}</option>

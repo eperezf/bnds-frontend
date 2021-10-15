@@ -12,7 +12,6 @@
   });
 
   async function fetchData(){
-    console.log("Mounted! Listing technologies");
     const res = await fetch(
       `${variables.apiEndpoint}/technology`,
       {

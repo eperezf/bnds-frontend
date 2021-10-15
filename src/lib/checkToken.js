@@ -1,21 +1,10 @@
 import jwt_decode from "jwt-decode";
 import { goto } from '$app/navigation';
 import { variables } from '$lib/variables';
-
-function getCookie(cName) {
-  const name = cName + "=";
-  const cDecoded = decodeURIComponent(document.cookie); //to be careful
-  const cArr = cDecoded.split('; ');
-  let res;
-  cArr.forEach(val => {
-    if (val.indexOf(name) === 0) res = val.substring(name.length);
-  });
-  return res;
-}
+import { getCookie } from '$lib/getCookie';
 
 export async function checkToken(){
   // Check if the token is OK. If not, try to revalidate. If not able to revalidate, send to login
-  console.log("Checking token");
   let idCookie = getCookie("idToken");
   if (!idCookie) {
     // If there is no cookie, send to login

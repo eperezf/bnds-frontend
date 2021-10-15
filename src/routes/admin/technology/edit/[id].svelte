@@ -2,7 +2,6 @@
 import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import Toast from '$lib/toast.svelte';
   import { goto } from '$app/navigation';
   import { checkToken } from '$lib/checkToken'
   import { getCookie } from '$lib/getCookie';
@@ -13,7 +12,7 @@ import { variables } from '$lib/variables';
   let saveText = "Guardar";
   let showToast = false;
   let toastMsg = "";
-
+  let loggedIn = false;
   onMount(async()=>{
     loggedIn = await checkToken();
 

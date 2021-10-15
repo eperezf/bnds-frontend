@@ -2,7 +2,6 @@
   import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import Toast from '$lib/toast.svelte';
   import { goto } from '$app/navigation';
   import { checkToken } from '$lib/checkToken'
   import { getCookie } from '$lib/getCookie';
@@ -85,8 +84,8 @@
         genName = "Error: " + genData.message;
         error = true;
         if (genRes.status == 404) {
-          $: orphanFrequency = true;
-          $: genId = "orphan";
+          orphanFrequency = true;
+          genId = "orphan";
         }
       } else {
         console.log(genData);
@@ -135,6 +134,7 @@
         <label for="generation" class="text-center mt-2">Generación</label>
         <select id="generation" class="rounded-lg text-black mt-2" bind:value={genId}>
           {#await genPromise}
+            <option value="loading" disabled>Cargando...</option>
           {:then items}
             {#if orphanFrequency}
               <option value="orphan" disabled>Generación eliminada. Escoja una nueva</option>
