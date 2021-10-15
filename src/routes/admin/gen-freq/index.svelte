@@ -3,6 +3,19 @@
   import Row from '$lib/row.svelte';
   import { goto } from '$app/navigation';
 
+
+  function getCookie(cName) {
+    const name = cName + "=";
+    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+    const cArr = cDecoded.split('; ');
+    let res;
+    cArr.forEach(val => {
+      if (val.indexOf(name) === 0) res = val.substring(name.length);
+    });
+    return res;
+  }
+
+
   async function fetchGenData(){
     const res = await fetch(`${variables.apiEndpoint}/generation`);
     const data = await res.json();
@@ -28,7 +41,14 @@
   }
 
   async function fetchFreqData(){
-    const res = await fetch(`${variables.apiEndpoint}/frequency`);
+    const res = await fetch(
+      `${variables.apiEndpoint}/frequency`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("accessToken")
+        }
+      }
+    );
     const data = await res.json();
 
     if (res.ok) {

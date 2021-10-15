@@ -5,7 +5,7 @@
     <a sveltekit:prefetch href="/admin/gen-freq" class="text-left p-3 rounded-lg mt-0 hover:bg-green-600 text-white transition-all">Generaciones y frecuencias</a>
     <a sveltekit:prefetch href="/admin/operator" class="text-left p-3 rounded-lg mt-0 hover:bg-green-600 text-white transition-all">Operadoras</a>
     <a sveltekit:prefetch href="/admin/smartphone" class="text-left p-3 rounded-lg mt-0 hover:bg-green-600 text-white transition-all">Smartphones</a>
-    <a sveltekit:prefetch href="/admin/logout" class="text-left p-3 rounded-lg mt-0 hover:bg-green-600 text-white transition-all">Cerrar sesión</a>
+    <!--<a sveltekit:prefetch href="/admin/logout" class="text-left p-3 rounded-lg mt-0 hover:bg-green-600 text-white transition-all">Cerrar sesión</a>-->
   </div>
   <div class="col-span-10 rounded-lg bg-gray-800 h-full p-4 antialiased text-white">
     <slot></slot>

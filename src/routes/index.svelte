@@ -1,4 +1,9 @@
-<h1 class="text-green-800">Welcome to SvelteKit</h1>
+<script>
+  import { variables } from '$lib/variables';
+
+</script>
+
+<h1 class="text-green-800">Welcome to BNDS</h1>
 <p>
-  BNDS
+  This server is running in {variables.nodeEnv} mode.
 </p>
