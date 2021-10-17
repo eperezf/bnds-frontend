@@ -7,6 +7,7 @@ import { getCookie } from '$lib/getCookie';
 let combinedData = [];
 let technologyData = [];
 let loggedIn = false;
+let files;
 onMount(async()=>{
 loggedIn = await checkToken();
 });
@@ -138,10 +139,22 @@ async function saveOperator(){
       technologies: technologies,
       frequencies: frequencies
     })
-  });
+  }).then(
+    response => response.json()
+  );
 
-  if (res.status == 200) {
+  if (!res.error) {
+    console.log(res.result.uploadUrl);
     saveText = "Guardado!";
+    if (files) {
+      console.log(files);
+      const imageUpload = await fetch(res.result.uploadUrl, {
+        method: 'PUT',
+        body: files[0],
+        headers: {"Content-Type": files[0].type}
+      });
+      console.log(imageUpload);
+    }
     goto('/admin/operator');
   } else {
     saveText = "ERROR GUARDANDO";
@@ -163,8 +176,10 @@ async function saveOperator(){
           <div class="col-start-2 col-span-1 grid grid-cols-1">
             <label for="name" class="text-center mt-2">Nombre</label>
             <input type="text" id="opName" class="rounded-lg text-black mt-2" required bind:value={opName}/>
-            <label for="url" class="text-center mt-2">Link</label>
+            <label for="url" class="text-center mt-2">Link Web</label>
             <input type="text" id="opUrl" class="rounded-lg text-black mt-2" required bind:value={opUrl}/>
+            <label for="image" class="text-center mt-2">Logo</label>
+            <input type="file" id="image" class="mt-2 text-center bg-gray-400 p-2 rounded-lg shadow-md" bind:files>
             <div class="mt-2 mx-auto">
               <input type="checkbox" id="opEnabled" class="rounded my-2 align-middle" bind:checked={opEnabled}/>
               <label for="opEnabled" class="ml-2 my-2 align-middle">Activado</label>

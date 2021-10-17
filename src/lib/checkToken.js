@@ -37,6 +37,7 @@ export async function checkToken(){
         document.cookie = "idToken="+res.result.idToken+";path=/";
         document.cookie = "accessToken="+res.result.accessToken+";path=/";
         document.cookie = "refreshToken="+res.result.refreshToken+";path=/";
+        location.reload();
         return true;
       }
     } else {

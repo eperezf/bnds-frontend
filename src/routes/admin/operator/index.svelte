@@ -61,7 +61,7 @@ import { variables } from '$lib/variables';
         <p>Cargando...</p>
       {:then items}
         {#each items.operators as operator}
-          <OperatorCard name={operator.name} image="http://via.placeholder.com/200x200" id={operator.id} enabled={operator.enabled} on:message={handleDelete}/>
+          <OperatorCard name={operator.name} image={variables.staticEndpoint+"/operators/"+operator.id+".png"} id={operator.id} enabled={operator.enabled} on:message={handleDelete}/>
         {/each}
       {:catch error}
         <p class="text-red-600">{error.message}</p>
