@@ -16,7 +16,7 @@
   <div class="w-100 h-100 rounded-lg bg-gray-700 p-4 mt-2 shadow-md">
     <div class="grid grid-cols-2 gap-2 place-items-center">
       <div class="justify-self-start">
-        <a href="/admin/smartphone/addmodel"><button class="rounded-lg bg-green-600 p-2">Agregar Smartphone</button></a>
+        <a href="/admin/phone/add"><button class="rounded-lg bg-green-600 p-2">Agregar Smartphone</button></a>
       </div>
       <div class="justify-self-end">
         <button class="rounded-lg bg-green-600 p-2">Buscar</button>
@@ -35,7 +35,7 @@
         <tr>
       </thead>
       <tbody>
-        <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
+        <SmartphoneRow id="Av4cNU" brand="Apple" model="iPhone 12" variants={variants} enabled={true}/>
         <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
         <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
         <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
