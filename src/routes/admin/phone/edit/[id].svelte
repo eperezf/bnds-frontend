@@ -15,7 +15,7 @@ onMount(async()=>{
 async function fetchData(){
   // Get the phone data
   const res = await fetch(
-    `http://localhost:3000/phone/${$page.params.id}`,
+    `${variables.apiEndpoint}/phone/${$page.params.id}`,
     {
       headers: {
         'authorization': 'Bearer ' + getCookie("idToken")
@@ -54,7 +54,7 @@ async function saveSmartphone(){
   enabled ? false : true;
 
   // Do the POST
-  const res = await fetch(`http://localhost:3000/phone`, {
+  const res = await fetch(`${variables.apiEndpoint}/phone`, {
     method: 'PUT',
     headers: {
       'Accept': 'application/json',

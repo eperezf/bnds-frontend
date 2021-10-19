@@ -26,9 +26,9 @@ async function saveSmartphone(){
   saveText = "Guardando...";
   // Check if operator is enabled
   enabled ? false : true;
-  
+
   // Do the POST
-  const res = await fetch(`http://localhost:3000/phone`, {
+  const res = await fetch(`${variables.apiEndpoint}/phone`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',

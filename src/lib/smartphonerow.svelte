@@ -30,12 +30,10 @@
       {/each}
     </td>
   {/if}
-  {#if enabled != undefined}
     {#if enabled}
       <td>Activado</td>
     {:else}
       <td>Desactivado</td>
-    {/if}
   {/if}
     <td class="rounded-r-lg">
       <a sveltekit:prefetch href="/admin/phone/edit/{id}"><button class="rounded-lg bg-green-600 p-2 m-2">Editar</button></a>

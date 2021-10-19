@@ -4,11 +4,31 @@
   import SmartphoneRow from '$lib/smartphonerow.svelte';
   import { onMount } from 'svelte';
   import { checkToken } from '$lib/checkToken';
-  let variants = ["A1234", "A3232", "A1221"]
+  import { getCookie } from '$lib/getCookie';
   let loggedIn = false;
   onMount(async()=>{
     loggedIn = await checkToken();
   });
+
+  async function fetchData(){
+    const res = await fetch(
+      `${variables.apiEndpoint}/phone`,
+      {
+        headers: {
+          'authorization': 'Bearer ' + getCookie("idToken")
+        }
+      }
+    );
+    const data = await res.json();
+    if (res.ok) {
+      console.log(data);
+      return data;
+    } else {
+      throw new Error(data);
+    }
+  }
+  let promise = fetchData();
+
 </script>
 <main>
 {#if loggedIn}
@@ -23,26 +43,29 @@
         <input type="text" class="inline text-black p-2 rounded">
       </div>
     </div>
-    <table class="table-auto w-full text-center mt-4">
-      <thead>
-        <tr>
-          <th class="font-semibold">ID</th>
-          <th class="font-semibold">Marca</th>
-          <th class="font-semibold">Modelo</th>
-          <th class="font-semibold">Variantes</th>
-          <th class="font-semibold">Status</th>
-          <th class="font-semibold">Acciones</th>
-        <tr>
-      </thead>
-      <tbody>
-        <SmartphoneRow id="Av4cNU" brand="Apple" model="iPhone 12" variants={variants} enabled={true}/>
-        <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
-        <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
-        <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
-        <SmartphoneRow id="asd123" brand="Apple" model="iPhone 12 Pro" variants={variants} enabled={true}/>
-      </tbody>
-    </table>
-
+    {#await promise}
+      <p class="mt-2">Cargando...</p>
+    {:then items}
+      <table class="table-auto w-full text-center mt-4">
+        <thead>
+          <tr>
+            <th class="font-semibold">ID</th>
+            <th class="font-semibold">Marca</th>
+            <th class="font-semibold">Modelo</th>
+            <th class="font-semibold">Variantes</th>
+            <th class="font-semibold">Status</th>
+            <th class="font-semibold">Acciones</th>
+          <tr>
+        </thead>
+        <tbody>
+        {#each items.phones as phone}
+          <SmartphoneRow id={phone.id} brand={phone.brand} model={phone.model} variants={phone.variants} enabled={phone.enabled}/>
+        {/each}
+        </tbody>
+      </table>
+      {:catch error}
+        <p class="text-red-600">{error.message}</p>
+      {/await}
   </div>
 {/if}
 </main>
