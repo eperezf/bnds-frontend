@@ -47,14 +47,14 @@ let enabled;
 async function saveSmartphone(){
   let error = false;
   //Set saving state to true
-  saving = false;
+  saving = true;
   // Set saving text
   saveText = "Guardando...";
   // Check if operator is enabled
   enabled ? false : true;
 
   // Do the POST
-  const res = await fetch(`${variables.apiEndpoint}/phone`, {
+  const res = await fetch(`${variables.apiEndpoint}/phone/${$page.params.id}`, {
     method: 'PUT',
     headers: {
       'Accept': 'application/json',
@@ -85,7 +85,7 @@ async function saveSmartphone(){
     } else {
       saveText = "Guardado!";
     }
-    goto('/admin/smartphone');
+    goto('/admin/phone');
   } else {
     saveText = "ERROR GUARDANDO";
   }

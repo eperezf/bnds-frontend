@@ -28,6 +28,9 @@
       {#each variants as variant}
       <div class="inline m-1 bg-gray-800 p-1.5 rounded-lg text-sm">{variant}</div>
       {/each}
+      {#if variants.length == 0}
+      <div class="inline m-1 bg-gray-800 p-1.5 rounded-lg text-sm">Sin variantes</div>
+      {/if}
     </td>
   {/if}
     {#if enabled}
