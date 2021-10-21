@@ -58,7 +58,9 @@ import { variables } from '$lib/variables';
     <a href="/admin/operator/add"><button class="rounded-lg bg-green-600 p-2 mb-4">Agregar Operadora</button></a>
     <div class="grid grid-cols-4">
       {#await promise}
-        <p>Cargando...</p>
+        <div class="text-center col-span-4">
+          <i class="fas fa-spinner fa-spin"></i> Cargando...
+        </div>
       {:then items}
         {#each items.operators as operator}
           <OperatorCard name={operator.name} image={variables.staticEndpoint+"/operators/"+operator.id+".png"} id={operator.id} enabled={operator.enabled} on:message={handleDelete}/>

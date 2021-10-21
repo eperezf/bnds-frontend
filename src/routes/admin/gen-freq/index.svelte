@@ -91,7 +91,9 @@
       <div class="w-100 h-100 rounded-lg bg-gray-700 p-4 mt-2 shadow-md">
         <a href="/admin/gen-freq/addgeneration"><button class="rounded-lg bg-green-600 p-2 mb-4">Agregar Generación</button></a>
         {#await genPromise}
-          <p>Cargando...</p>
+          <div class="text-center">
+            <i class="fas fa-spinner fa-spin"></i> Cargando...
+          </div>
         {:then items}
           <table class="table-auto w-full text-center">
             <thead>
@@ -118,7 +120,9 @@
       <div class="w-100 h-100 rounded-lg bg-gray-700 p-4 mt-2 shadow-md">
         <a href="/admin/gen-freq/addfrequency"><button class="rounded-lg bg-green-600 p-2 mb-4">Agregar Frecuencia</button></a>
         {#await freqPromise}
-          <p>Cargando...</p>
+          <div class="text-center">
+            <i class="fas fa-spinner fa-spin"></i> Cargando...
+          </div>
         {:then items}
           <table class="table-auto w-full text-center">
             <thead>

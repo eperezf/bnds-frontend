@@ -62,7 +62,9 @@
       </div>
     </div>
     {#await promise}
-      <p class="mt-2"> <i class="fas fa-spinner fa-spin"></i> Cargando...</p>
+      <div class="text-center">
+        <i class="fas fa-spinner fa-spin"></i> Cargando...
+      </div>
     {:then items}
       <table class="table-auto w-full text-center mt-4 mb-4">
         <thead>

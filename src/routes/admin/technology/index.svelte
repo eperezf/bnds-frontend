@@ -59,7 +59,9 @@
   <div class="w-100 h-100 rounded-lg bg-gray-700 p-4 mt-2 shadow-md">
     <a href="/admin/technology/add"><button class="rounded-lg bg-green-600 p-2 mb-4">Agregar Tecnología</button></a>
     {#await promise}
-      <p>Cargando...</p>
+      <div class="text-center">
+        <i class="fas fa-spinner fa-spin"></i> Cargando...
+      </div>
     {:then items}
       <table class="table-auto w-full text-center">
         <thead>
