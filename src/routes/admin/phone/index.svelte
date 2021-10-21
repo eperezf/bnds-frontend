@@ -29,8 +29,6 @@
     if (searchTerm != "") {
       url = url + "&s=" + searchTerm;
     }
-
-
     const res = await fetch(
       url,
       {
@@ -64,7 +62,7 @@
       </div>
     </div>
     {#await promise}
-      <p class="mt-2">Cargando...</p>
+      <p class="mt-2"> <i class="fas fa-spinner fa-spin"></i> Cargando...</p>
     {:then items}
       <table class="table-auto w-full text-center mt-4 mb-4">
         <thead>

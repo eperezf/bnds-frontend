@@ -117,7 +117,7 @@ async function saveSmartphone(){
       </div>
     </div>
     <div class="col-span-8 bg-gray-700 rounded-lg shadow-md m-2 p-4">
-      <button class="rounded-lg bg-green-600 p-2 hover:bg-green-500 hover:shadow-lg shadow transition-all">Agregar nueva variante</button>
+      <a href="/admin/phone/edit/{$page.params.id}/addvariant" class="rounded-lg bg-green-600 p-2 hover:bg-green-500 hover:shadow-lg shadow transition-all">Agregar nueva variante</a>
       {#await dataPromise}
         <p>Cargando...</p>
       {:then items}
