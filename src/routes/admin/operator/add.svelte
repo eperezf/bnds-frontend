@@ -12,7 +12,7 @@ onMount(async()=>{
 loggedIn = await checkToken();
 });
 
-async function fetchData(){
+async function fetchTech(){
   const techRes = await fetch(`
     ${variables.apiEndpoint}/technology`,
     {
@@ -22,6 +22,15 @@ async function fetchData(){
     }
   );
   const techData = await techRes.json();
+  for (var technology of techData.technologies) {
+    technology.enabled = false;
+    technologyData.push(technology);
+  }
+  return technologyData;
+}
+
+async function fetchGenFreq(){
+
 
   const genRes = await fetch(
     `${variables.apiEndpoint}/generation`,
@@ -61,16 +70,13 @@ async function fetchData(){
     }
     genNum+=1;
   }
-  for (var technology of techData.technologies) {
-    technology.enabled = false;
-    technologyData.push(technology);
-  }
+
 
   combinedData.sort((a,b)=>(a.name>b.name?1:-1));
-  let data = {combinedData: combinedData, techData: techData};
-  return data;
+  return combinedData;
 }
-let dataPromise = fetchData();
+let genFreqPromise = fetchGenFreq();
+let techPromise = fetchTech();
 
 let saving = false;
 let saveText = "Guardar";
@@ -188,19 +194,16 @@ async function saveOperator(){
           </div>
         </div>
       </div>
-      {#await dataPromise}
-        <div class="col-span-5">
-          Cargando...
+        {#await genFreqPromise}
+        <div class="col-span-6 bg-gray-700 rounded-lg shadow-md m-2 p-4 text-center">
+          <i class="fas fa-spinner fa-spin"></i> Cargando frecuencias...
         </div>
-        <div class="col-span-5">
-          Cargando...
-        </div>
-      {:then items}
+        {:then items}
         <div class="col-span-6 bg-gray-700 rounded-lg shadow-md m-2 p-4 grid grid-cols-2 grid-flow-row">
           <div class="col-span-2">
             <p class="text-white text-2xl text-center">Frecuencias</p>
           </div>
-          {#each items.combinedData as combine}
+          {#each items as combine}
             <div class="col-span-2 bg-gray-600 m-1 rounded-lg shadow-lg grid grid-cols-2 grid-flow-row">
             <p class="mt-2 text-xl text-center font-bold col-span-2">{combine.name}</p>
             {#each combine.frequencies as frequency}
@@ -223,25 +226,28 @@ async function saveOperator(){
             </div>
           {/each}
         </div>
+        {:catch error}
+        <p class="text-red-500">{error}</p>
+        {/await}
+        {#await techPromise}
+        <div class="col-span-3 bg-gray-700 rounded-lg shadow-md m-2 p-4 text-center">
+          <i class="fas fa-spinner fa-spin"></i> Cargando frecuencias...
+        </div>
+        {:then items}
         <div class="col-span-3 bg-gray-700 rounded-lg shadow-md m-2 p-4">
           <div class="col-span-1">
             <p class="text-white text-2xl text-center">Tecnologías</p>
           </div>
-          {#each technologyData as technology}
+          {#each items as technology}
           <p class="mt-2">
             <input type="checkbox" id={technology.id} name={technology.id} class="rounded text-green-600 p-2 my-2 mr-1 transition ease-in-out" bind:checked={technology.enabled}>
             <label class="my-2" for={technology.id}>{technology.name}</label>
           </p>
           {/each}
         </div>
-      {:catch error}
-      <div class="col-span-5">
-        {error}
-      </div>
-      <div class="col-span-5">
-        {error}
-      </div>
-      {/await}
+        {:catch error}
+        <p class="text-red-500">{error}</p>
+        {/await}
     </div>
   </form>
 {/if}

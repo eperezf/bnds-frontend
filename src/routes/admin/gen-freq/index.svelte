@@ -85,8 +85,8 @@
 </script>
 <main>
 {#if loggedIn}
-  <div class="col-span-10 rounded-lg bg-gray-800 h-full p-4 antialiased text-white grid grid-cols-2">
-    <div class=" col-span-1 p-2">
+  <div class="col-span-10 rounded-lg bg-gray-800 h-full antialiased text-white grid grid-cols-2">
+    <div class=" col-span-1 pr-2">
       <p class="text-white text-2xl text-center">Generaciones</p>
       <div class="w-100 h-100 rounded-lg bg-gray-700 p-4 mt-2 shadow-md">
         <a href="/admin/gen-freq/addgeneration"><button class="rounded-lg bg-green-600 p-2 mb-4">Agregar Generación</button></a>
@@ -115,7 +115,7 @@
         {/await}
       </div>
     </div>
-    <div class=" col-span-1 p-2">
+    <div class=" col-span-1 pl-2">
       <p class="text-white text-2xl text-center">Frecuencias</p>
       <div class="w-100 h-100 rounded-lg bg-gray-700 p-4 mt-2 shadow-md">
         <a href="/admin/gen-freq/addfrequency"><button class="rounded-lg bg-green-600 p-2 mb-4">Agregar Frecuencia</button></a>

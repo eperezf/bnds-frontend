@@ -8,6 +8,7 @@ import { getCookie } from '$lib/getCookie';
 import VariantRow from '$lib/variantrow.svelte';
 let loggedIn = false;
 let files;
+let disabledInputs = true;
 onMount(async()=>{
   loggedIn = await checkToken();
 });
@@ -28,6 +29,7 @@ async function fetchData(){
     console.log(data.message);
     name = "Error: " + data.message;
   } else {
+    disabledInputs = false;
     brand = data.phone.brand;
     model = data.phone.model;
     enabled = data.phone.enabled;
@@ -40,8 +42,8 @@ let dataPromise = fetchData();
 
 let saving = false;
 let saveText = "Guardar";
-let brand;
-let model;
+let brand = "Cargando...";
+let model = "Cargando...";
 let enabled;
 
 async function saveSmartphone(){
@@ -103,9 +105,9 @@ async function saveSmartphone(){
       <div class="col-span-1">
         <div class=" col-span-1 grid grid-cols-1">
           <label for="brand" class="text-center mt-2">Marca</label>
-          <input type="text" id="brand" class="rounded-lg text-black mt-2" required bind:value={brand}/>
+          <input type="text" id="brand" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={brand}/>
           <label for="model" class="text-center mt-2">Modelo</label>
-          <input type="text" id="model" class="rounded-lg text-black mt-2" required bind:value={model}/>
+          <input type="text" id="model" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={model}/>
           <!--<label for="image" class="text-center mt-2">Imagen</label>
           <input type="file" id="image" class="mt-2 text-center bg-gray-400 p-2 rounded-lg shadow-md" bind:files>-->
           <div class="mt-2 mx-auto">
@@ -119,7 +121,9 @@ async function saveSmartphone(){
     <div class="col-span-8 bg-gray-700 rounded-lg shadow-md m-2 p-4">
       <a href="/admin/phone/edit/{$page.params.id}/addvariant" class="rounded-lg bg-green-600 p-2 hover:bg-green-500 hover:shadow-lg shadow transition-all">Agregar nueva variante</a>
       {#await dataPromise}
-        <p>Cargando...</p>
+      <div class="text-center">
+        <i class="fas fa-spinner fa-spin"></i> Cargando variantes...
+      </div>
       {:then items}
         <table class="table-auto w-full text-center mt-4">
           <thead>

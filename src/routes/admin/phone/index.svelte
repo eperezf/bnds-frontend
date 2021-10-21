@@ -24,7 +24,7 @@
   }
 
   async function fetchData(){
-    var url = `http://localhost:3001/offline/phone`;
+    var url = `${variables.apiEndpoint}/phone`;
     url = url + "?p=" + p;
     if (searchTerm != "") {
       url = url + "&s=" + searchTerm;
