@@ -47,6 +47,22 @@
   }
   let promise = fetchData();
 
+  async function handlePhoneDelete(event){
+    const res = await fetch(`${variables.apiEndpoint}/phone/${event.detail.id}`, {
+      method: 'DELETE',
+      headers: {
+        'authorization': 'Bearer ' + getCookie("idToken")
+      }
+    });
+    console.log(res);
+    if (res.status != 200) {
+      console.log("ERROR DELETING");
+    } else {
+      promise = await fetchData();
+    }
+  }
+
+
 </script>
 <main>
 {#if loggedIn}
@@ -79,7 +95,7 @@
         </thead>
         <tbody>
         {#each items.phones.phones as phone}
-          <SmartphoneRow id={phone.id} brand={phone.brand} model={phone.model} variants={phone.variants} enabled={phone.enabled}/>
+          <SmartphoneRow id={phone.id} brand={phone.brand} model={phone.model} variants={phone.variants} enabled={phone.enabled} on:message={handlePhoneDelete}/>
         {/each}
         </tbody>
       </table>

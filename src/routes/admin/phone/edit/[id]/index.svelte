@@ -9,12 +9,12 @@ import VariantRow from '$lib/variantrow.svelte';
 let loggedIn = false;
 let files;
 let disabledInputs = true;
+let imageExists = false;
 onMount(async()=>{
   loggedIn = await checkToken();
 });
 
 async function fetchData(){
-  // Get the phone data
   const res = await fetch(
     `${variables.apiEndpoint}/phone/${$page.params.id}`,
     {
@@ -24,6 +24,11 @@ async function fetchData(){
     }
   );
   let data = await res.json();
+
+  const img = await fetch(`${variables.staticEndpoint}/phones/${$page.params.id}.png`)
+  if (img.status == 200) {
+    imageExists = true;
+  }
   if (res.status != 200) {
     console.log("ERROR");
     console.log(data.message);
@@ -78,7 +83,7 @@ async function saveSmartphone(){
     console.log(res.result.uploadUrl);
 
     if (files) {
-      saveText = "Guardando...";
+      saveText = "Subiendo imagen...";
       console.log(files);
       const imageUpload = await fetch(res.result.uploadUrl, {
         method: 'PUT',
@@ -95,28 +100,51 @@ async function saveSmartphone(){
   }
 }
 
+async function handleVariantDelete(event){
+  const res = await fetch(`${variables.apiEndpoint}/variant/${event.detail.phoneId}/${event.detail.variantId}`, {
+    method: 'DELETE',
+    headers: {
+      'authorization': 'Bearer ' + getCookie("idToken")
+    }
+  });
+  console.log(res);
+  if (res.status != 200) {
+    console.log("ERROR DELETING");
+  } else {
+    console.log("ALL OK DELETING");
+    dataPromise = await fetchData();
+  }
+}
+
 </script>
 <main>
 {#if loggedIn}
 <div class="col-span-1">
   <p class="text-white text-2xl text-center">Editar Teléfono</p>
 </div>
-<form on:submit|preventDefault={saveSmartphone}>
+
   <div class="grid grid-cols-12 grid-flow-col gap-4">
     <div class="col-span-4 bg-gray-700 rounded-lg shadow-md m-2 p-4">
       <div class="col-span-1">
         <div class=" col-span-1 grid grid-cols-1">
-          <label for="brand" class="text-center mt-2">Marca</label>
-          <input type="text" id="brand" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={brand}/>
-          <label for="model" class="text-center mt-2">Modelo</label>
-          <input type="text" id="model" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={model}/>
-          <!--<label for="image" class="text-center mt-2">Imagen</label>
-          <input type="file" id="image" class="mt-2 text-center bg-gray-400 p-2 rounded-lg shadow-md" bind:files>-->
-          <div class="mt-2 mx-auto">
-            <input type="checkbox" id="enabled" class="rounded my-2 align-middle" bind:checked={enabled}/>
-            <label for="enabled" class="ml-2 my-2 align-middle">Activado</label>
-          </div>
-          <button type="submit" class=" w-32 mx-auto mt-4 rounded-lg p-2 bg-green-600 hover:bg-green-500 shadow transition-all" disabled={saving}>{saveText}</button>
+          {#if imageExists}
+            <img src="{variables.staticEndpoint}/phones/{$page.params.id}.png" class="m-auto h-64"/>
+          {:else}
+            <h2 class="text-center text-xl h-32 align-self-center">SIN IMAGEN</h2>
+          {/if}
+          <form on:submit|preventDefault={saveSmartphone} class="grid grid-cols-1 col-span-1">
+            <label for="brand" class="text-center mt-2">Marca</label>
+            <input type="text" id="brand" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={brand}/>
+            <label for="model" class="text-center mt-2">Modelo</label>
+            <input type="text" id="model" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={model}/>
+            <label for="image" class="text-center mt-2">Imagen</label>
+            <input type="file" id="image" class="mt-2 text-center bg-gray-400 p-2 rounded-lg shadow-md" bind:files>
+            <div class="mt-2 mx-auto">
+              <input type="checkbox" id="enabled" class="rounded my-2 align-middle" bind:checked={enabled}/>
+              <label for="enabled" class="ml-2 my-2 align-middle">Activado</label>
+            </div>
+            <button type="submit" class=" w-32 mx-auto mt-4 rounded-lg p-2 bg-green-600 hover:bg-green-500 shadow transition-all" disabled={saving}>{saveText}</button>
+          </form>
         </div>
       </div>
     </div>
@@ -138,7 +166,7 @@ async function saveSmartphone(){
           </thead>
           <tbody>
             {#each items.phone.variants as variant}
-              <VariantRow id={variant.id} phoneId={phoneId} variant={variant.name} enabled={variant.enabled}/>
+              <VariantRow variantId={variant.id} phoneId={phoneId} variant={variant.name} enabled={variant.enabled} on:message={handleVariantDelete}/>
             {/each}
           </tbody>
         </table>
@@ -147,6 +175,6 @@ async function saveSmartphone(){
       {/await}
     </div>
   </div>
-</form>
+
 {/if}
 </main>
