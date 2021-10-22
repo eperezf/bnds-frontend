@@ -128,7 +128,7 @@ async function handleVariantDelete(event){
       <div class="col-span-1">
         <div class=" col-span-1 grid grid-cols-1">
           {#if imageExists}
-            <img src="{variables.staticEndpoint}/phones/{$page.params.id}.png" class="m-auto h-64"/>
+            <img src="{variables.staticEndpoint}/phones/{$page.params.id}.png" class="m-auto h-64" alt="Phone"/>
           {:else}
             <h2 class="text-center text-xl h-32 align-self-center">SIN IMAGEN</h2>
           {/if}
