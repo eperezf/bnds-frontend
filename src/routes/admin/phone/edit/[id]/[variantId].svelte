@@ -8,6 +8,7 @@ import { getCookie } from '$lib/getCookie';
 let combinedData = [];
 let technologyData = [];
 let phoneData = {};
+let variantData = {};
 let loggedIn = false;
 let loadString = "Cargando...";
 onMount(async()=>{
@@ -25,6 +26,9 @@ async function fetchData(){
     }
   );
   phoneData = await phoneRes.json();
+
+  loadString = "Cargando variante...";
+  let variantData = phoneData.phone.variants.find(o => o.id === $page.params.variantId);
 
   loadString = "Cargando tecnologías...";
   const techRes = await fetch(`
@@ -82,9 +86,27 @@ async function fetchData(){
     technologyData.push(technology);
   }
 
+  // Set the items correctly
+  for (let technology of variantData.technologies) {
+    let obj = technologyData.find(o => o.id === technology);
+    obj.enabled = true;
+  }
+
+  for (let generation of combinedData) {
+    for (let frequency of generation.frequencies) {
+      let obj = variantData.frequencies.find(o => o === frequency.id);
+      if (obj) {
+        frequency.enabled = true;
+      }
+    }
+  }
+
   combinedData.sort((a,b)=>(a.name>b.name?1:-1));
-  let data = {combinedData: combinedData, techData: techData, phoneData: phoneData.phone};
+  let data = {combinedData: combinedData, techData: techData, phoneData: phoneData.phone, variantData: variantData};
   console.log(data);
+  enabled = variantData.enabled;
+  ogVariantName = variantData.name;
+  name = variantData.name;
   return data;
 }
 let dataPromise = fetchData();
@@ -93,27 +115,35 @@ let saving = false;
 let saveText = "Guardar";
 let name;
 let enabled;
+let ogVariantName;
 
 async function saveVariant(){
-  console.log(phoneData);
+
   let error = false;
   //Set saving state to true
-  saving = false;
+  //saving = true;
   // Set saving text
   saveText = "Guardando...";
   // Check if operator is enabled
   enabled ? false : true;
+
+  // Declare variables for frequency sweep
   let frequencies=[];
+  let freqNum = 0;
+
+  // Frequency sweep
   for (var generation of combinedData) {
     for (var frequency of generation.frequencies) {
       if (frequency.enabled) {
-        frequencies.push(frequency.id);
+        frequencies[freqNum] = frequency.id;
+        freqNum+=1;
       }
     }
-
   }
+
   // Declare variables for technology sweep
   let technologies=[];
+
   // Technology sweep
   for (var technology of technologyData) {
     if (technology.enabled) {
@@ -121,35 +151,29 @@ async function saveVariant(){
     }
   }
 
-  // Do the POST
-  const res = await fetch(`${variables.apiEndpoint}/variant`, {
-    method: 'POST',
+
+  //saving = true;
+  saveText = "Guardando...";
+  const res = await fetch(`${variables.apiEndpoint}/variant/${$page.params.id}/${$page.params.variantId}`, {
+    method: 'PUT',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'authorization': 'Bearer ' + getCookie("idToken")
     },
     body: JSON.stringify({
-      brand: phoneData.phone.brand,
-      model: phoneData.phone.model,
       name: name,
+      ogName: ogVariantName,
       enabled: enabled,
       technologies: technologies,
-      frequencies: frequencies,
-      phoneId: $page.params.id
+      frequencies: frequencies
     })
-  }).then(
-    response => response.json()
-  );
-
-  if (!res.error) {
-    console.log(res.result.uploadUrl);
+  })
+  console.log(res);
+  if (res.status == 200) {
     saveText = "Guardado!";
     goto(`/admin/phone/edit/${$page.params.id}`);
-  } else {
-    saveText = "ERROR GUARDANDO";
   }
-
 }
 
 </script>
@@ -161,7 +185,7 @@ async function saveVariant(){
 </div>
 {:then items}
   <div class="col-span-1">
-    <p class="text-white text-2xl text-center">Crear Variante del {items.phoneData.brand} {items.phoneData.model}</p>
+    <p class="text-white text-2xl text-center">Editando Variante del {items.phoneData.brand} {items.phoneData.model}</p>
   </div>
   <form on:submit|preventDefault={saveVariant}>
     <div class="grid grid-cols-12 grid-flow-col gap-4">

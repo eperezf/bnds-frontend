@@ -34,6 +34,7 @@ async function fetchData(){
     model = data.phone.model;
     enabled = data.phone.enabled;
     console.log(data);
+    phoneId = data.phone.id;
   }
   return data;
 }
@@ -44,6 +45,7 @@ let saving = false;
 let saveText = "Guardar";
 let brand = "Cargando...";
 let model = "Cargando...";
+let phoneId;
 let enabled;
 
 async function saveSmartphone(){
@@ -136,7 +138,7 @@ async function saveSmartphone(){
           </thead>
           <tbody>
             {#each items.phone.variants as variant}
-              <VariantRow id={variant.id} variant={variant.name} enabled={variant.enabled}/>
+              <VariantRow id={variant.id} phoneId={phoneId} variant={variant.name} enabled={variant.enabled}/>
             {/each}
           </tbody>
         </table>

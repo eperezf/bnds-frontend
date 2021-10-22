@@ -4,6 +4,7 @@
   export let id = undefined;
   export let variant = undefined;
   export let enabled = undefined;
+  export let phoneId = undefined;
   function sendDeleteMessage(){
     dispatch('message', {
       id: id,
@@ -26,7 +27,7 @@
     {/if}
   {/if}
     <td class="rounded-r-lg">
-      <a sveltekit:prefetch href="/admin/phone/edit/{id}"><button class="rounded-lg bg-green-600 p-2 m-2">Editar</button></a>
+      <a sveltekit:prefetch href="/admin/phone/edit/{phoneId}/{id}"><button class="rounded-lg bg-green-600 p-2 m-2">Editar</button></a>
       <button class="rounded-lg bg-red-600 p-2 m-2" on:click|once={sendDeleteMessage}>Borrar</button>
     </td>
 </tr>
