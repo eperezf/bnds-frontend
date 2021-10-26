@@ -37,8 +37,8 @@ async function fetchData(){
     disabledInputs = false;
     brand = data.phone.brand;
     model = data.phone.model;
+    review = data.phone.review;
     enabled = data.phone.enabled;
-    console.log(data);
     phoneId = data.phone.id;
   }
   return data;
@@ -50,6 +50,7 @@ let saving = false;
 let saveText = "Guardar";
 let brand = "Cargando...";
 let model = "Cargando...";
+let review = "Cargando...";
 let phoneId;
 let enabled;
 
@@ -73,6 +74,7 @@ async function saveSmartphone(){
     body: JSON.stringify({
       brand: brand,
       model: model,
+      review: review,
       enabled: enabled,
     })
   }).then(
@@ -137,6 +139,11 @@ async function handleVariantDelete(event){
             <input type="text" id="brand" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={brand}/>
             <label for="model" class="text-center mt-2">Modelo</label>
             <input type="text" id="model" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={model}/>
+            <label for="review" class="text-center mt-2">Link Review</label>
+            <div class="flex mt-2">
+              <span class="rounded-l-md bg-white shadow-sm text-sm inline-flex items-center px-3 border-t border-l border-b border-gray-300 text-gray-700 {disabledInputs? "opacity-50":""}">https://</span>
+              <input type="url" id="review" class="border border-gray-300 py-2 px-2 w-full text-black shadow-sm rounded-r-lg focus:ring-0 placeholder-gray-400 disabled:opacity-50" bind:value={review} disabled={disabledInputs} placeholder="pisapapeles.net/slug-review"/>
+            </div>
             <label for="image" class="text-center mt-2">Imagen</label>
             <input type="file" id="image" class="mt-2 text-center bg-gray-400 p-2 rounded-lg shadow-md" bind:files>
             <div class="mt-2 mx-auto">

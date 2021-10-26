@@ -16,6 +16,7 @@ let saving = false;
 let saveText = "Guardar";
 let brand;
 let model;
+let review;
 let enabled;
 
 async function saveSmartphone(){
@@ -38,6 +39,7 @@ async function saveSmartphone(){
     body: JSON.stringify({
       brand: brand,
       model: model,
+      review: review,
       enabled: enabled,
     })
   }).then(
@@ -80,6 +82,11 @@ async function saveSmartphone(){
           <input type="text" id="brand" class="rounded-lg text-black mt-2" required bind:value={brand}/>
           <label for="model" class="text-center mt-2">Modelo</label>
           <input type="text" id="model" class="rounded-lg text-black mt-2" required bind:value={model}/>
+          <label for="review" class="text-center mt-2">Link review</label>
+          <div class="flex mt-2">
+            <span class="rounded-l-md bg-white shadow-sm text-sm inline-flex items-center px-3 border-t border-l border-b border-gray-300 text-gray-700">https://</span>
+            <input type="url" id="review" class="border border-gray-300 py-2 px-2 w-full text-black shadow-sm rounded-r-lg focus:ring-0 placeholder-gray-400" bind:value={review} placeholder="pisapapeles.net/slug-review"/>
+          </div>
           <label for="image" class="text-center mt-2">Imagen</label>
           <input type="file" id="image" class="mt-2 text-center bg-gray-400 p-2 rounded-lg shadow-md" bind:files>
           <div class="mt-2 mx-auto">
