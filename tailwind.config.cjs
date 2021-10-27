@@ -9,6 +9,7 @@ const config = {
 	plugins: [
 		require('@tailwindcss/forms'),
 	],
+	darkMode: 'media'
 };
 
 module.exports = config;
