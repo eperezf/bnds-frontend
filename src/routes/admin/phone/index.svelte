@@ -20,6 +20,7 @@
   }
 
   function setSearchTerm(){
+    p=1;
     promise = fetchData();
   }
 

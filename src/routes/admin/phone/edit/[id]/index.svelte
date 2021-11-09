@@ -37,8 +37,8 @@ async function fetchData(){
     disabledInputs = false;
     brand = data.phone.brand;
     model = data.phone.model;
+    review = data.phone.review;
     enabled = data.phone.enabled;
-    console.log(data);
     phoneId = data.phone.id;
   }
   return data;
@@ -50,6 +50,7 @@ let saving = false;
 let saveText = "Guardar";
 let brand = "Cargando...";
 let model = "Cargando...";
+let review = "Cargando...";
 let phoneId;
 let enabled;
 
@@ -73,6 +74,7 @@ async function saveSmartphone(){
     body: JSON.stringify({
       brand: brand,
       model: model,
+      review: review,
       enabled: enabled,
     })
   }).then(
@@ -137,6 +139,8 @@ async function handleVariantDelete(event){
             <input type="text" id="brand" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={brand}/>
             <label for="model" class="text-center mt-2">Modelo</label>
             <input type="text" id="model" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} required bind:value={model}/>
+            <label for="review" class="text-center mt-2">Link review</label>
+            <input type="url" id="review" class="rounded-lg text-black mt-2 disabled:opacity-50" disabled={disabledInputs} bind:value={review}/>
             <label for="image" class="text-center mt-2">Imagen</label>
             <input type="file" id="image" class="mt-2 text-center bg-gray-400 p-2 rounded-lg shadow-md" bind:files>
             <div class="mt-2 mx-auto">

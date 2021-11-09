@@ -19,9 +19,7 @@
   async function doLogin(){
     notAuthorized = false;
     loggingIn = true;
-    loginText = "Iniciando sesión..."
-    //`${variables.apiEndpoint}/login`
-    //`http://localhost:3001/offline/login`
+    loginText = "Iniciando sesión...";
     const res = await fetch(`${variables.apiEndpoint}/login`, {
       method: 'POST',
       headers: {
@@ -40,7 +38,7 @@
       if (res.message == 'NotAuthorizedException') {
         notAuthorized = true;
       } else if (res.message == "PasswordChangeRequired") {
-        goto('https://bnds-dev.auth.us-east-1.amazoncognito.com/login?client_id=50oh16f01ussuagolnvaer449h&response_type=code&scope=email+openid&redirect_uri=https://dev.bnds.cl/admin/login')
+        goto(`https://bnds-dev.auth.us-east-1.amazoncognito.com/login?client_id=50oh16f01ussuagolnvaer449h&response_type=code&scope=email+openid&redirect_uri=${variables.returnUrl}`)
       }
       loggingIn = false;
       loginText = "Iniciar sesión"
