@@ -12,7 +12,8 @@ function sendCloseMessage(){
 
 <div class="mx-auto fixed inset-0 flex justify-center w-full bg-gray-700 bg-opacity-50 backdrop-filter backdrop-blur z-10" transition:fade="{{duration:200}}">
   <div class="self-center bg-white p-4 rounded-lg shadow mx-2" in:fly="{{ y: -100, duration: 400 }}" out:fly="{{ y: -100, duration: 400 }}" >
-    <p class="text-center text-xl {generation.result === 'success'? 'text-green-700':''}{generation.result === 'partial'? 'text-yellow-700':''}{generation.result === 'error'? 'text-red-700':''}">
+    <div class="text-center text-xl justify-center flex {generation.result === 'success'? 'text-green-700':''}{generation.result === 'partial'? 'text-yellow-700':''}{generation.result === 'error'? 'text-red-700':''} mb-2">
+      <div class="bg-yellow-100 py-1 px-2 rounded-xl border-2 border-yellow-200">
       {generation.name}
       {#if generation.result === "success"}
         <i class="fas fa-check-circle"></i>
@@ -21,7 +22,8 @@ function sendCloseMessage(){
       {:else}
         <i class="fas fa-times-circle"></i>
       {/if}
-    </p>
+      </div>
+    </div>
     <p class="text-center">
       {#if generation.result === "success"}
         100% Compatible
@@ -76,7 +78,7 @@ function sendCloseMessage(){
       </tbody>
     </table>
     <p class="text-center mt-4">
-      <button class="p-2 rounded-lg bg-green-100 text-green-700" on:click|once={sendCloseMessage}>Cerrar</button>
+      <button class="p-2 rounded-lg bg-blue-100 text-blue-700" on:click|once={sendCloseMessage}>Cerrar</button>
     </p>
   </div>
 </div>
