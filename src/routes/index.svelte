@@ -1,26 +1,59 @@
 <script>
   import { variables } from '$lib/variables';
   import { slide } from 'svelte/transition';
-  let darkMode = false;
   let mobileMenu = false;
   let operator;
-  function toggleDarkMode(){
-    if (darkMode) {
-      darkMode = false;
-    } else {
-      darkMode = true;
-    }
-  }
+  let phone;
 
   function toggleMobileMenu(){
     if (mobileMenu) {
-      mobileMenu = false
+      mobileMenu = false;
     } else {
       mobileMenu = true;
     }
   }
+
+  let list = [];
+	let timer;
+
+  const debounce = v => {
+		clearTimeout(timer);
+    list = [];
+		timer = setTimeout(() => {
+      fetchAutocomplete(v);
+		}, 500);
+	}
+
+  let searching = false;
+  let done = false;
+
+  async function fetchAutocomplete (query) {
+    if (phone.length > 0) {
+      searching = true;
+      done = false;
+      var url = `${variables.apiEndpoint}/search/autocomplete?s=` + query;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (res.ok) {
+        searching = false;
+        done = true;
+        list = data.phones;
+        list = list.slice(0,5);
+        console.log(list);
+      }
+    }
+  }
+
+
+  function setPhone(name){
+    done = false;
+    list = [];
+    phone = name;
+  }
+
+
 </script>
-<main class="{darkMode? "dark" : ""} h-screen">
+<main class="h-screen">
   <!-- Mobile Menu -->
   <div class="absolute md:hidden inset-x-0 top-0">
     <div class="h-20 bg-emerald-500 shadow-lg grid grid-cols-2 p-4">
@@ -93,7 +126,20 @@
         <option>Virgin Mobile</option>
       </select>
       <label for="phone" class="text-center">Busca tu teléfono:</label>
-      <input name="phone" id="phone" type="search" class="rounded-lg mt-2"/>
+      <div class="w-full">
+        <input name="phone" id="phone" type="search" class="rounded-lg w-full mt-2" on:keyup={({ target: { value } }) => debounce(value)} bind:value={phone}/>
+        {#if searching}
+          <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
+            <p class="p-4 "><i class="fas fa-spinner fa-spin"></i> Buscando...</p>
+          </div>
+        {:else if done}
+          <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
+            {#each list as phoneSug}
+              <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg" on:click={()=>setPhone(phoneSug)}>{phoneSug}</p>
+            {/each}
+          </div>
+        {/if}
+      </div>
       <button class="mt-4 bg-emerald-400 mx-auto p-2 rounded-lg shadow">Verificar</button>
     </div>
   </div>
