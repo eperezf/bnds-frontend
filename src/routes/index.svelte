@@ -1,6 +1,7 @@
 <script>
   import { variables } from '$lib/variables';
   import { slide } from 'svelte/transition';
+  import { ph, op } from '../stores.js';
   let mobileMenu = false;
   let operator;
   let phone;
@@ -18,6 +19,7 @@
   let unfilled = true;
   const debounce = v => {
 		clearTimeout(timer);
+    ph.set(v);
     list = [];
 		timer = setTimeout(() => {
       fetchAutocomplete(v);
@@ -48,6 +50,7 @@
     done = false;
     list = [];
     phone = name;
+    ph.set(phone);
   }
 
   let operatorPromise = fetchOperators();
@@ -57,9 +60,14 @@
     const data = await opRes.json();
     console.log(data.operators);
     unfilled = false;
+    ph.set("");
+    op.set(data.operators[0].id);
     return data.operators;
   }
 
+  function setOperator(){
+    op.set(operator);
+  }
 
 </script>
 <main class="h-screen">
@@ -126,35 +134,37 @@
       <p class="text-xl mb-4 text-center">Revisa si tu teléfono es compatible</p>
       <p class="text-md mb-4 mx-2 text-center">Busca el modelo de tu teléfono y la operadora que quieres usar
     </div>
-    <div class="bg-emerald-500 p-4 m-4 rounded-lg grid shadow-lg">
-      <label for="operator" class="text-center">Selecciona tu operadora:</label>
-        <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2" disabled={unfilled}>
-        {#await operatorPromise}
-          <option>Cargando...</option>
-        {:then operators}
-          {#each operators as operator}
-            <option value={operator.id}>{operator.name}</option>
-          {/each}
-        {:catch error}
-          <option>Error cargando operadoras</option>
-        {/await}
-      </select>
-      <label for="phone" class="text-center">Busca tu teléfono:</label>
-      <div class="w-full">
-        <input name="phone" id="phone" type="search" class="rounded-lg w-full mt-2" on:keyup={({ target: { value } }) => debounce(value)} bind:value={phone}/>
-        {#if searching}
-          <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
-            <p class="p-4 "><i class="fas fa-spinner fa-spin"></i> Buscando...</p>
-          </div>
-        {:else if done}
-          <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
-            {#each list as phoneSug}
-              <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg" on:click={()=>setPhone(phoneSug)}>{phoneSug}</p>
+    <form method="post" action="/result">
+      <div class="bg-emerald-500 p-4 m-4 rounded-lg grid shadow-lg">
+        <label for="operator" class="text-center">Selecciona tu operadora:</label>
+          <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2" disabled={unfilled} on:change={setOperator}>
+          {#await operatorPromise}
+            <option>Cargando...</option>
+          {:then operators}
+            {#each operators as operator}
+              <option value={operator.id}>{operator.name}</option>
             {/each}
-          </div>
-        {/if}
+          {:catch error}
+            <option>Error cargando operadoras</option>
+          {/await}
+        </select>
+        <label for="phone" class="text-center">Busca tu teléfono:</label>
+        <div class="w-full">
+          <input name="phone" id="phone" type="search" class="rounded-lg w-full mt-2" on:keyup={({ target: { value } }) => debounce(value)} bind:value={phone}/>
+          {#if searching}
+            <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
+              <p class="p-4 "><i class="fas fa-spinner fa-spin"></i> Buscando...</p>
+            </div>
+          {:else if done}
+            <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
+              {#each list as phoneSug}
+                <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg" on:click={()=>setPhone(phoneSug)}>{phoneSug}</p>
+              {/each}
+            </div>
+          {/if}
+        </div>
+        <button class="mt-4 bg-emerald-400 mx-auto p-2 rounded-lg shadow">Verificar</button>
       </div>
-      <button class="mt-4 bg-emerald-400 mx-auto p-2 rounded-lg shadow">Verificar</button>
-    </div>
+    </form>
   </div>
 </main>

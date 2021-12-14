@@ -1,6 +1,10 @@
 <script>
 import Modal from '$lib/freqmodal.svelte';
 import Card from '$lib/freqcard.svelte';
+import { ph, op } from '../stores.js';
+
+console.log($ph);
+console.log($op);
 
 let modal = false;
 
