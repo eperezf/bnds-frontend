@@ -15,7 +15,7 @@
 
   let list = [];
 	let timer;
-
+  let unfilled = true;
   const debounce = v => {
 		clearTimeout(timer);
     list = [];
@@ -44,11 +44,20 @@
     }
   }
 
-
   function setPhone(name){
     done = false;
     list = [];
     phone = name;
+  }
+
+  let operatorPromise = fetchOperators();
+
+  async function fetchOperators(){
+    const opRes = await fetch(`${variables.apiEndpoint}/search/operators`);
+    const data = await opRes.json();
+    console.log(data.operators);
+    unfilled = false;
+    return data.operators;
   }
 
 
@@ -119,11 +128,16 @@
     </div>
     <div class="bg-emerald-500 p-4 m-4 rounded-lg grid shadow-lg">
       <label for="operator" class="text-center">Selecciona tu operadora:</label>
-      <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2">
-        <option>Claro</option>
-        <option>Entel</option>
-        <option>Movistar</option>
-        <option>Virgin Mobile</option>
+        <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2" disabled={unfilled}>
+        {#await operatorPromise}
+          <option>Cargando...</option>
+        {:then operators}
+          {#each operators as operator}
+            <option value={operator.id}>{operator.name}</option>
+          {/each}
+        {:catch error}
+          <option>Error cargando operadoras</option>
+        {/await}
       </select>
       <label for="phone" class="text-center">Busca tu teléfono:</label>
       <div class="w-full">
