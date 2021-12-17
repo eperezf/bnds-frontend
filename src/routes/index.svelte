@@ -1,10 +1,21 @@
 <script>
   import { variables } from '$lib/variables';
+  import { onMount } from 'svelte';
   import { slide } from 'svelte/transition';
-  import { ph, op } from '../stores.js';
+  import { ph, op } from '$lib/stores.js';
   let mobileMenu = false;
   let operator;
   let phone;
+
+  onMount(async()=>{
+    ph.subscribe(value => {
+        localStorage.setItem("ph", value);
+    });
+
+    op.subscribe(value => {
+        localStorage.setItem("op", value);
+    });
+  });
 
   function toggleMobileMenu(){
     if (mobileMenu) {
@@ -134,7 +145,7 @@
       <p class="text-xl mb-4 text-center">Revisa si tu teléfono es compatible</p>
       <p class="text-md mb-4 mx-2 text-center">Busca el modelo de tu teléfono y la operadora que quieres usar
     </div>
-    <form method="post" action="/result">
+    <form method="get" action="/result">
       <div class="bg-emerald-500 p-4 m-4 rounded-lg grid shadow-lg">
         <label for="operator" class="text-center">Selecciona tu operadora:</label>
           <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2" disabled={unfilled} on:change={setOperator}>
