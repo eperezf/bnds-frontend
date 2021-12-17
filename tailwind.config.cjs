@@ -1,6 +1,7 @@
+const colors = require('tailwindcss/colors')
+
 const config = {
-	mode: "jit",
-	purge: [
+	content: [
 		"./src/**/*.{html,js,svelte,ts}",
 	],
 	theme: {
@@ -8,8 +9,7 @@ const config = {
 	},
 	plugins: [
 		require('@tailwindcss/forms'),
-	],
-	darkMode: 'media'
+	]
 };
 
 module.exports = config;
