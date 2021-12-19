@@ -179,7 +179,9 @@ function noImage(){
   </div>
 </div>
 {#if haveData == "pending"}
-<div class="absolute" transition:fade>CARGANDO</div>
+<div class="h-full grid grid-cols-1 items-center content-center text-center justify-center max-w-screen-sm mx-auto">
+<div class="text-2xl font-bold"><i class="fas fa-spin fa-circle-notch"></i> CARGANDO</div>
+</div>
 {:else if haveData == "ok"}
 <div class="pt-20 md:pt-0 max-w-screen-xl mx-auto relative grid sm:grid-cols-1 md:grid-cols-3 z-0" transition:fade>
 
@@ -203,7 +205,7 @@ function noImage(){
       </div>
       <div class="max-h-80 max-w-sm mx-auto border-solid border-2 border-blue-200 bg-blue-100 rounded-2xl my-4 relative">
       {#if image}
-        <img src="{variables.staticEndpoint+"/phones/"+phone.image}" class="max-h-80 mx-auto" on:error={noImage} alt="{phone.brand} {phone.model} {phone.variant}"/>
+        <img src="{variables.staticEndpoint+"/phones/"+phone.image}" class="max-h-80 p-2 mx-auto" on:error={noImage} alt="{phone.brand} {phone.model} {phone.variant}"/>
       {:else}
         <div class="h-48 grid justify-items-center content-center"><div class="text-center font-bold text-blue-500 text-lg">Sin imagen</div></div>
       {/if}

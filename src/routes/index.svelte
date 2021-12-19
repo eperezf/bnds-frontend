@@ -1,7 +1,7 @@
 <script>
   import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
-  import { slide } from 'svelte/transition';
+  import { slide, fade } from 'svelte/transition';
   import { ph, op, ct } from '$lib/stores.js';
   import { goto } from '$app/navigation';
 
@@ -168,7 +168,7 @@
     </div>
   </div>
   <!--Body-->
-  <div class="pt-20 h-full grid grid-cols-1 items-center content-center justify-center max-w-screen-sm mx-auto">
+  <div class="pt-20 h-full grid grid-cols-1 items-center content-center justify-center max-w-screen-sm mx-auto" transition:fade>
     <div class="text-center mx-auto">
       <p class="text-xl mb-4 text-center font-bold">Revisa si tu teléfono es compatible</p>
       <p class="text-md mb-4 mx-2 text-center">Busca el modelo de tu teléfono y la operadora que quieres usar
