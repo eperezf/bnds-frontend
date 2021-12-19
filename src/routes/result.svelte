@@ -1,14 +1,16 @@
 <script>
 import { variables } from '$lib/variables';
 import { writable } from 'svelte/store';
-import { fade} from 'svelte/transition';
+import { fade, slide} from 'svelte/transition';
 import Modal from '$lib/freqmodal.svelte';
 import TechModal from '$lib/techmodal.svelte';
 import Card from '$lib/freqcard.svelte';
 import { onMount } from 'svelte';
+import { goto } from '$app/navigation';
 
 let storedPh;
 let storedOp;
+let storedCt;
 let haveData = "pending";
 var operator = {};
 var phone = {};
@@ -19,19 +21,21 @@ var data = {};
 onMount(async()=>{
   storedPh = localStorage.getItem("ph");
   storedOp = localStorage.getItem("op");
-  data = await fetchData(storedOp, storedPh);
-  console.log(data);
+  storedCt = localStorage.getItem("ct");
+  data = await fetchData(storedOp, storedPh, storedCt);
   operator = data.response.operator;
   phone = data.response.phone;
   generations = data.response.generations;
   technologies = data.response.technologies;
-  //localStorage.setItem("ph", "");
-  //localStorage.setItem("op", "");
+  localStorage.setItem("ph", "");
+  localStorage.setItem("op", "");
+  localStorage.setItem("ct", "");
+
+
 });
 
 
-async function fetchData(operator, phone){
-  console.log("Fetching data!");
+async function fetchData(operator, phone, token){
   const res = await fetch(`${variables.apiEndpoint}/search/compare`, {
     method: 'POST',
     headers: {
@@ -41,13 +45,29 @@ async function fetchData(operator, phone){
     body: JSON.stringify({
       operator: operator,
       phone: phone,
+      token: token,
     })
   });
   const data = await res.json();
-  if (res.ok) {
+  console.log(data);
+  if (res.ok && data.error == false) {
+    gtag('event', 'view_search_results', {
+      'search_term': data.response.phone.brand + ' '+data.response.phone.model + ' '+data.response.phone.variant+' en '+data.response.operator.name,
+      'phone': data.response.phone.brand + ' '+data.response.phone.model + ' '+data.response.phone.variant,
+      'operator': data.response.operator.name
+    });
+    gtag('config', 'UA-50709703-2', {
+      'page_title': 'Resultados',
+      'page_path': '/result',
+      'custom_map': {
+        'dimension1': 'phone',
+        'dimension2': 'operator'
+      }
+    });
     haveData = "ok";
   } else {
-    haveData = "error";
+    goto('/');
+
   }
   return data;
 }
@@ -82,16 +102,87 @@ function toggleTechModal(){
   }
 }
 
+let mobileMenu = false;
+function toggleMobileMenu(){
+  if (mobileMenu) {
+    mobileMenu = false;
+  } else {
+    mobileMenu = true;
+  }
+}
+
 let image = true;
 function noImage(){
   image = false;
 }
 
 </script>
+<svelte:head>
+    <title>BNDS.cl | Resultados</title>
+</svelte:head>
+<main class="h-screen">
+<!-- Mobile Menu -->
+<div class="absolute md:hidden inset-x-0 top-0 z-10">
+  <div class="h-20 bg-green-300 shadow-lg grid grid-cols-2 p-4">
+    <div class="justify-self-start self-center">
+      <img src="/logo.png" class="h-6 my-auto" alt="BNDS logo"/>
+    </div>
+    <div class="justify-self-end self-center">
+      <button class="border-2 rounded-md border-emerald-600 h-10 w-10" on:click={toggleMobileMenu}>
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+  {#if mobileMenu}
+    <div class="bg-green-400 grid p-4 shadow divide-solid divide-y divide-green-700" transition:slide>
+      <a href="/" class="p-2">
+        <i class="fas fa-home"></i>
+        Inicio
+      </a>
+      <a href="/about" class="p-2">
+        <i class="fas fa-info-circle"></i>
+        Nosotros
+      </a>
+      <a href="/variant" class="p-2">
+        <i class="fas fa-question-circle"></i>
+        ¿Cuál es la variante de mi teléfono?
+      </a>
+      <button class="p-2">
+        <i class="fas fa-code"></i>
+        API (pronto!)
+      </button>
+    </div>
+  {/if}
+</div>
+<!-- Desktop Menu -->
+<div class="hidden md:block p-2 z-10">
+  <div class="h-20 bg-green-300 shadow-lg p-4 rounded-lg">
+    <div class="flex max-w-screen-lg mx-auto">
+      <img src="/logo.png" class="h-6 my-auto mr-2" alt="BNDS logo"/>
+      <a href="/" class="p-2">
+        <i class="fas fa-home"></i>
+        Inicio
+      </a>
+      <a href="/about" class="p-2">
+        <i class="fas fa-info-circle"></i>
+        Nosotros
+      </a>
+      <a href="/variant" class="p-2">
+        <i class="fas fa-question-circle"></i>
+        ¿Cuál es la variante de mi teléfono?
+      </a>
+      <button class="p-2">
+        <i class="fas fa-code"></i>
+        API (pronto!)
+      </button>
+    </div>
+  </div>
+</div>
 {#if haveData == "pending"}
 <div class="absolute" transition:fade>CARGANDO</div>
 {:else if haveData == "ok"}
-<main class="bg-gray-100 max-w-screen-xl mx-auto relative grid sm:grid-cols-1 md:grid-cols-3" transition:fade>
+<div class="pt-20 md:pt-0 max-w-screen-xl mx-auto relative grid sm:grid-cols-1 md:grid-cols-3 z-0" transition:fade>
+
 {#if modal}
   {#if isFreqModal}
     <Modal phone={phone} operator={operator} generation={selectedGeneration} on:message={()=>toggleFreqModal()}/>
@@ -112,11 +203,11 @@ function noImage(){
       </div>
       <div class="max-h-80 max-w-sm mx-auto border-solid border-2 border-blue-200 bg-blue-100 rounded-2xl my-4 relative">
       {#if image}
-        <img src="{variables.staticEndpoint+"/phones/"+phone.image}" class="max-h-80 mx-auto" on:error={noImage}/>
+        <img src="{variables.staticEndpoint+"/phones/"+phone.image}" class="max-h-80 mx-auto" on:error={noImage} alt="{phone.brand} {phone.model} {phone.variant}"/>
       {:else}
         <div class="h-48 grid justify-items-center content-center"><div class="text-center font-bold text-blue-500 text-lg">Sin imagen</div></div>
       {/if}
-        <img src="{variables.staticEndpoint+"/operators/"+operator.image}" class="absolute bottom-0 right-0 border-2 border-gray-300 rounded-xl bg-gray-100 p-2 m-2 h-20 backdrop-filter backdrop-blur-lg bg-opacity-50"/>
+        <img src="{variables.staticEndpoint+"/operators/"+operator.image}" class="absolute bottom-0 right-0 border-2 border-gray-300 rounded-xl bg-gray-100 p-2 m-2 h-20 backdrop-filter backdrop-blur-lg bg-opacity-50" alt="Operator logo"/>
       </div>
       <div class="flex flex-col">
         {#if phone.review}
@@ -236,7 +327,8 @@ function noImage(){
         {/each}
       </div>
   </div>
-</main>
+</div>
 {:else}
 ERROR
 {/if}
+</main>

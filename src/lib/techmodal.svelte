@@ -10,7 +10,7 @@ function sendCloseMessage(){
 }
 </script>
 
-<div class="mx-auto fixed inset-0 flex justify-center w-full bg-gray-700 bg-opacity-50 backdrop-filter backdrop-blur z-10" transition:fade="{{duration:200}}">
+<div class="mx-auto fixed inset-0 flex justify-center w-full bg-gray-700 bg-opacity-50 backdrop-filter backdrop-blur z-20" transition:fade="{{duration:200}}">
   <div class="self-center bg-white p-4 rounded-lg shadow mx-2" in:fly="{{ y: -100, duration: 400 }}" out:fly="{{ y: -100, duration: 400 }}" >
     <div class="text-center text-xl justify-center flex mb-2">
     <div class="py-1 px-2 rounded-xl border-2

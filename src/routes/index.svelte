@@ -2,8 +2,9 @@
   import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { slide } from 'svelte/transition';
-  import { ph, op } from '$lib/stores.js';
-  let mobileMenu = false;
+  import { ph, op, ct } from '$lib/stores.js';
+  import { goto } from '$app/navigation';
+
   let operator;
   let phone;
 
@@ -15,8 +16,15 @@
     op.subscribe(value => {
         localStorage.setItem("op", value);
     });
+
+    ct.subscribe(value => {
+        localStorage.setItem("ct", value);
+    });
+    gtag('js', new Date());
+    gtag('config', 'UA-50709703-2', {'page_title': 'Inicio', 'page_path':'/'});
   });
 
+  let mobileMenu = false;
   function toggleMobileMenu(){
     if (mobileMenu) {
       mobileMenu = false;
@@ -41,18 +49,20 @@
   let done = false;
 
   async function fetchAutocomplete (query) {
-    if (phone.length > 0) {
-      searching = true;
-      done = false;
-      var url = `${variables.apiEndpoint}/search/autocomplete?s=` + query;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (res.ok) {
-        searching = false;
-        done = true;
-        list = data.phones;
-        list = list.slice(0,5);
-        console.log(list);
+    if (phone) {
+      if (phone.length > 0) {
+        searching = true;
+        done = false;
+        var url = `${variables.apiEndpoint}/search/autocomplete?s=` + query;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (res.ok) {
+          gtag('event', 'search', {'search_term': query});
+          searching = false;
+          done = true;
+          list = data.phones;
+          list = list.slice(0,5);
+        }
       }
     }
   }
@@ -64,12 +74,24 @@
     ph.set(phone);
   }
 
+  function setVars(){
+    if (!phone) {
+      //console.log("PHONE EMPTY!");
+    } else {
+      grecaptcha.ready(function() {
+        grecaptcha.execute(variables.captchaSiteKey, {action: 'submit'}).then(function(token) {
+          ct.set(token);
+          goto('/result');
+        });
+      });
+    }
+  }
+
   let operatorPromise = fetchOperators();
 
   async function fetchOperators(){
     const opRes = await fetch(`${variables.apiEndpoint}/search/operators`);
     const data = await opRes.json();
-    console.log(data.operators);
     unfilled = false;
     ph.set("");
     op.set(data.operators[0].id);
@@ -81,12 +103,18 @@
   }
 
 </script>
+
+<svelte:head>
+  <title>BNDS.cl | 5G Ready!</title>
+  <script src='https://www.google.com/recaptcha/api.js?render={variables.captchaSiteKey}'></script>
+</svelte:head>
+
 <main class="h-screen">
   <!-- Mobile Menu -->
   <div class="absolute md:hidden inset-x-0 top-0">
-    <div class="h-20 bg-emerald-500 shadow-lg grid grid-cols-2 p-4">
+    <div class="h-20 bg-green-300 shadow-lg grid grid-cols-2 p-4">
       <div class="justify-self-start self-center">
-        <img src="/logo.png" class="h-12"/>
+        <img src="/logo.png" class="h-6 my-auto" alt="BNDS logo"/>
       </div>
       <div class="justify-self-end self-center">
         <button class="border-2 rounded-md border-emerald-600 h-10 w-10" on:click={toggleMobileMenu}>
@@ -95,19 +123,19 @@
       </div>
     </div>
     {#if mobileMenu}
-      <div class="bg-emerald-600 grid p-4 shadow divide-solid divide-y divide-emerald-700" transition:slide>
-        <button class="p-2">
+      <div class="bg-green-400  grid p-4 shadow divide-solid divide-y divide-green-700" transition:slide>
+        <a href="/" class="p-2">
           <i class="fas fa-home"></i>
           Inicio
-        </button>
-        <button class="p-2">
+        </a>
+        <a href="/about" class="p-2">
           <i class="fas fa-info-circle"></i>
           Nosotros
-        </button>
-        <button class="p-2">
+        </a>
+        <a href="/variant" class="p-2">
           <i class="fas fa-question-circle"></i>
           ¿Cuál es la variante de mi teléfono?
-        </button>
+        </a>
         <button class="p-2">
           <i class="fas fa-code"></i>
           API (pronto!)
@@ -117,21 +145,21 @@
   </div>
   <!-- Desktop Menu -->
   <div class="hidden md:block absolute inset-x-0 top-0 p-2">
-    <div class="h-20 bg-emerald-500 shadow-lg p-4 rounded-lg">
+    <div class="h-20 bg-green-300 shadow-lg p-4 rounded-lg">
       <div class="flex max-w-screen-lg mx-auto">
-        <img src="/logo.png" class="h-12 mr-2"/>
-        <button class="p-2">
+        <img src="/logo.png" class="h-6 my-auto mr-2" alt="BNDS logo"/>
+        <a href="/" class="p-2">
           <i class="fas fa-home"></i>
           Inicio
-        </button>
-        <button class="p-2">
+        </a>
+        <a href="/about" class="p-2">
           <i class="fas fa-info-circle"></i>
           Nosotros
-        </button>
-        <button class="p-2">
+        </a>
+        <a href="/variant" class="p-2">
           <i class="fas fa-question-circle"></i>
           ¿Cuál es la variante de mi teléfono?
-        </button>
+        </a>
         <button class="p-2">
           <i class="fas fa-code"></i>
           API (pronto!)
@@ -142,11 +170,11 @@
   <!--Body-->
   <div class="pt-20 h-full grid grid-cols-1 items-center content-center justify-center max-w-screen-sm mx-auto">
     <div class="text-center mx-auto">
-      <p class="text-xl mb-4 text-center">Revisa si tu teléfono es compatible</p>
+      <p class="text-xl mb-4 text-center font-bold">Revisa si tu teléfono es compatible</p>
       <p class="text-md mb-4 mx-2 text-center">Busca el modelo de tu teléfono y la operadora que quieres usar
     </div>
     <form method="get" action="/result">
-      <div class="bg-emerald-500 p-4 m-4 rounded-lg grid shadow-lg">
+      <div class="bg-white p-4 m-4 rounded-lg grid shadow-lg">
         <label for="operator" class="text-center">Selecciona tu operadora:</label>
           <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2" disabled={unfilled} on:change={setOperator}>
           {#await operatorPromise}
@@ -161,7 +189,7 @@
         </select>
         <label for="phone" class="text-center">Busca tu teléfono:</label>
         <div class="w-full">
-          <input name="phone" id="phone" type="search" class="rounded-lg w-full mt-2" on:keyup={({ target: { value } }) => debounce(value)} bind:value={phone}/>
+          <input name="phone" id="phone" type="search" on:keyup={({ target: { value } }) => debounce(value)} bind:value={phone} required class="rounded-lg w-full mt-2">
           {#if searching}
             <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
               <p class="p-4 "><i class="fas fa-spinner fa-spin"></i> Buscando...</p>
@@ -174,7 +202,7 @@
             </div>
           {/if}
         </div>
-        <button class="mt-4 bg-emerald-400 mx-auto p-2 rounded-lg shadow">Verificar</button>
+        <button class="mt-4 bg-blue-100 rounded-xl text-blue-700 border-2 border-blue-200 mx-auto p-2 shadow g-recaptcha" on:click|preventDefault={setVars}>Verificar</button>
       </div>
     </form>
   </div>
