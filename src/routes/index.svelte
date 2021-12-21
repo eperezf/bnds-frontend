@@ -114,7 +114,9 @@
   <div class="absolute md:hidden inset-x-0 top-0">
     <div class="h-20 bg-green-300 shadow-lg grid grid-cols-2 p-4">
       <div class="justify-self-start self-center">
-        <img src="/logo.png" class="h-6 my-auto" alt="BNDS logo"/>
+        <a href="/">
+          <img src="/logo.png" class="h-6 my-auto" alt="BNDS logo"/>
+        </a>
       </div>
       <div class="justify-self-end self-center">
         <button class="border-2 rounded-md border-emerald-600 h-10 w-10" on:click={toggleMobileMenu}>
