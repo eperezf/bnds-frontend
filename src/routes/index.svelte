@@ -149,7 +149,9 @@
   <div class="hidden md:block absolute inset-x-0 top-0 p-2">
     <div class="h-20 bg-green-300 shadow-lg p-4 rounded-lg">
       <div class="flex max-w-screen-lg mx-auto">
-        <img src="/logo.png" class="h-6 my-auto mr-2" alt="BNDS logo"/>
+        <a href="/" class="my-auto">
+          <img src="/logo.png" class="h-6 mr-2" alt="BNDS logo"/>
+        </a>
         <a href="/" class="p-2">
           <i class="fas fa-home"></i>
           Inicio
