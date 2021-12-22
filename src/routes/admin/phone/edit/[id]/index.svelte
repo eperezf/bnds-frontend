@@ -24,11 +24,6 @@ async function fetchData(){
     }
   );
   let data = await res.json();
-
-  const img = await fetch(`${variables.staticEndpoint}/phones/${$page.params.id}.png`)
-  if (img.status == 200) {
-    imageExists = true;
-  }
   if (res.status != 200) {
     console.log("ERROR");
     console.log(data.message);
@@ -118,6 +113,11 @@ async function handleVariantDelete(event){
   }
 }
 
+let image = true;
+function noImage(){
+  image = false;
+}
+
 </script>
 <main>
 {#if loggedIn}
@@ -129,8 +129,8 @@ async function handleVariantDelete(event){
     <div class="col-span-4 bg-gray-700 rounded-lg shadow-md m-2 p-4">
       <div class="col-span-1">
         <div class=" col-span-1 grid grid-cols-1">
-          {#if imageExists}
-            <img src="{variables.staticEndpoint}/phones/{$page.params.id}.png" class="m-auto h-64" alt="Phone"/>
+          {#if image}
+            <img src="{variables.staticEndpoint}/phones/{$page.params.id}.png" class="m-auto h-64" on:error={noImage} alt="Phone"/>
           {:else}
             <h2 class="text-center text-xl h-32 align-self-center">SIN IMAGEN</h2>
           {/if}
