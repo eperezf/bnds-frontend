@@ -50,7 +50,7 @@
           Desde hace varios años desarrollamos proyectos de contenido o de software para nosotros y con otras empresas. Creemos en co-crear con la comunidad y en un periodismo honesto.
         </p>
         <div class="mt-3">
-          <img class="rounded-lg" src="/us.jpg"/>
+          <img class="rounded-lg" src="/us.jpg" alt="Equipo BNDS en el lanzamiento el año 2016"/>
           <div class="text-center text-gray-600 text-sm mt-1">Lanzando BNDS el año 2016</div>
         </div>
       </div>
