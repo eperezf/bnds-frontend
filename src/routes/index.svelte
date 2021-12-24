@@ -2,11 +2,13 @@
   import { variables } from '$lib/variables';
   import { onMount } from 'svelte';
   import { slide, fade } from 'svelte/transition';
-  import { ph, op, ct } from '$lib/stores.js';
+  import { ph, op, ct, er } from '$lib/stores.js';
   import { goto } from '$app/navigation';
 
   let operator;
   let phone;
+  let error = false;
+  let errorText = "";
 
   onMount(async()=>{
     ph.subscribe(value => {
@@ -22,16 +24,12 @@
     });
     gtag('js', new Date());
     gtag('config', 'UA-50709703-2', {'page_title': 'Inicio', 'page_path':'/'});
-  });
-
-  let mobileMenu = false;
-  function toggleMobileMenu(){
-    if (mobileMenu) {
-      mobileMenu = false;
-    } else {
-      mobileMenu = true;
+    if (localStorage.getItem("er") == "notFound") {
+      errorText ="No encontramos el teléfono que buscabas."
+      error = true;
+      localStorage.setItem("er", "");
     }
-  }
+  });
 
   let list = [];
 	let timer;
@@ -47,12 +45,14 @@
 
   let searching = false;
   let done = false;
+  let noneFound = false;
 
   async function fetchAutocomplete (query) {
     if (phone) {
       if (phone.length > 0) {
         searching = true;
         done = false;
+        noneFound = false;
         var url = `${variables.apiEndpoint}/search/autocomplete?s=` + query;
         const res = await fetch(url);
         const data = await res.json();
@@ -61,6 +61,9 @@
           searching = false;
           done = true;
           list = data.phones;
+          if (list.length == 0) {
+            noneFound = true;
+          }
           list = list.slice(0,5);
         }
       }
@@ -110,67 +113,6 @@
 </svelte:head>
 
 <main class="h-screen">
-  <!-- Mobile Menu -->
-  <div class="absolute md:hidden inset-x-0 top-0">
-    <div class="h-20 bg-green-300 shadow-lg grid grid-cols-2 p-4">
-      <div class="justify-self-start self-center">
-        <a href="/">
-          <img src="/logo.png" class="h-6 my-auto" alt="BNDS logo"/>
-        </a>
-      </div>
-      <div class="justify-self-end self-center">
-        <button class="border-2 rounded-md border-emerald-600 h-10 w-10" on:click={toggleMobileMenu}>
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-    </div>
-    {#if mobileMenu}
-      <div class="bg-green-400  grid p-4 shadow divide-solid divide-y divide-green-700" transition:slide>
-        <a href="/" class="p-2">
-          <i class="fas fa-home"></i>
-          Inicio
-        </a>
-        <a href="/about" class="p-2">
-          <i class="fas fa-info-circle"></i>
-          Nosotros
-        </a>
-        <a href="/variant" class="p-2">
-          <i class="fas fa-question-circle"></i>
-          ¿Cuál es la variante de mi teléfono?
-        </a>
-        <button class="p-2">
-          <i class="fas fa-code"></i>
-          API (pronto!)
-        </button>
-      </div>
-    {/if}
-  </div>
-  <!-- Desktop Menu -->
-  <div class="hidden md:block absolute inset-x-0 top-0 p-2">
-    <div class="h-20 bg-green-300 shadow-lg p-4 rounded-lg">
-      <div class="flex max-w-screen-lg mx-auto">
-        <a href="/" class="my-auto">
-          <img src="/logo.png" class="h-6 mr-2" alt="BNDS logo"/>
-        </a>
-        <a href="/" class="p-2">
-          <i class="fas fa-home"></i>
-          Inicio
-        </a>
-        <a href="/about" class="p-2">
-          <i class="fas fa-info-circle"></i>
-          Nosotros
-        </a>
-        <a href="/variant" class="p-2">
-          <i class="fas fa-question-circle"></i>
-          ¿Cuál es la variante de mi teléfono?
-        </a>
-        <button class="p-2">
-          <i class="fas fa-code"></i>
-          API (pronto!)
-        </button>
-      </div>
-    </div>
-  </div>
   <!--Body-->
   <div class="pt-20 h-full grid grid-cols-1 items-center content-center justify-center max-w-screen-sm mx-auto" transition:fade>
     <div class="text-center mx-auto">
@@ -200,14 +142,26 @@
             </div>
           {:else if done}
             <div class="absolute divide-y divide-gray-200 bg-white rounded-lg shadow mt-1">
-              {#each list as phoneSug}
-                <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg" on:click={()=>setPhone(phoneSug)}>{phoneSug}</p>
-              {/each}
+              {#if !noneFound}
+                {#each list as phoneSug}
+                  <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg" on:click={()=>setPhone(phoneSug)}>{phoneSug}</p>
+                {/each}
+              {:else}
+                <a href="https://twitter.com/bndscl" target="_blank">
+                  <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg text-sm">No encontramos tu teléfono. ¡Avísanos! <i class="fab fa-twitter"></i></p>
+                </a>
+              {/if}
             </div>
           {/if}
         </div>
         <button class="mt-4 bg-blue-100 rounded-xl text-blue-700 border-2 border-blue-200 mx-auto p-2 shadow g-recaptcha" on:click|preventDefault={setVars}>Verificar</button>
       </div>
     </form>
+    {#if error}
+      <div class="p-4 mx-4 bg-red-300 rounded-lg shadow-lg text-red-700 flex justify-between" transition:fade>
+        <div>{errorText}</div>
+        <div on:click={()=>error=false}><i class="fas fa-times rounded-full cursor-pointer"></i></div>
+      </div>
+    {/if}
   </div>
 </main>

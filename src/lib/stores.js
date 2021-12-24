@@ -16,6 +16,7 @@ ph.subscribe(value => {
 export const op = writable(0);
 
 export const ct = writable(0);
+export const er = writable(0);
 /*
 op.subscribe(value => {
     localStorage.setItem("op", value);

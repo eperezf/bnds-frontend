@@ -11,6 +11,7 @@ import { goto } from '$app/navigation';
 let storedPh;
 let storedOp;
 let storedCt;
+let storedEr;
 let haveData = "pending";
 var operator = {};
 var phone = {};
@@ -22,6 +23,7 @@ onMount(async()=>{
   storedPh = localStorage.getItem("ph");
   storedOp = localStorage.getItem("op");
   storedCt = localStorage.getItem("ct");
+  storedEr = localStorage.getItem("er");
   data = await fetchData(storedOp, storedPh, storedCt);
   operator = data.response.operator;
   phone = data.response.phone;
@@ -62,6 +64,7 @@ async function fetchData(operator, phone, token){
     });
     haveData = "ok";
   } else {
+    localStorage.setItem("er", "notFound");
     goto('/');
 
   }
@@ -98,15 +101,6 @@ function toggleTechModal(){
   }
 }
 
-let mobileMenu = false;
-function toggleMobileMenu(){
-  if (mobileMenu) {
-    mobileMenu = false;
-  } else {
-    mobileMenu = true;
-  }
-}
-
 let image = true;
 function noImage(){
   image = false;
@@ -117,73 +111,12 @@ function noImage(){
     <title>BNDS.cl | Resultados</title>
 </svelte:head>
 <main class="h-screen">
-<!-- Mobile Menu -->
-<div class="absolute md:hidden inset-x-0 top-0 z-10">
-  <div class="h-20 bg-green-300 shadow-lg grid grid-cols-2 p-4">
-    <div class="justify-self-start self-center">
-      <a href="/">
-        <img src="/logo.png" class="h-6 my-auto" alt="BNDS logo"/>
-      </a>
-    </div>
-    <div class="justify-self-end self-center">
-      <button class="border-2 rounded-md border-emerald-600 h-10 w-10" on:click={toggleMobileMenu}>
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-  </div>
-  {#if mobileMenu}
-    <div class="bg-green-400 grid p-4 shadow divide-solid divide-y divide-green-700" transition:slide>
-      <a href="/" class="p-2">
-        <i class="fas fa-home"></i>
-        Inicio
-      </a>
-      <a href="/about" class="p-2">
-        <i class="fas fa-info-circle"></i>
-        Nosotros
-      </a>
-      <a href="/variant" class="p-2">
-        <i class="fas fa-question-circle"></i>
-        ¿Cuál es la variante de mi teléfono?
-      </a>
-      <button class="p-2">
-        <i class="fas fa-code"></i>
-        API (pronto!)
-      </button>
-    </div>
-  {/if}
-</div>
-<!-- Desktop Menu -->
-<div class="hidden md:block p-2 z-10">
-  <div class="h-20 bg-green-300 shadow-lg p-4 rounded-lg">
-    <div class="flex max-w-screen-lg mx-auto">
-      <a href="/" class="my-auto">
-        <img src="/logo.png" class="h-6 mr-2" alt="BNDS logo"/>
-      </a>
-      <a href="/" class="p-2">
-        <i class="fas fa-home"></i>
-        Inicio
-      </a>
-      <a href="/about" class="p-2">
-        <i class="fas fa-info-circle"></i>
-        Nosotros
-      </a>
-      <a href="/variant" class="p-2">
-        <i class="fas fa-question-circle"></i>
-        ¿Cuál es la variante de mi teléfono?
-      </a>
-      <button class="p-2">
-        <i class="fas fa-code"></i>
-        API (pronto!)
-      </button>
-    </div>
-  </div>
-</div>
 {#if haveData == "pending"}
-<div class="h-full grid grid-cols-1 items-center content-center text-center justify-center max-w-screen-sm mx-auto">
-<div class="text-2xl font-bold"><i class="fas fa-spin fa-circle-notch"></i> CARGANDO</div>
+<div class="h-full grid grid-cols-1 items-center content-center text-center justify-center max-w-screen-sm mx-auto" transition:fade>
+  <div class="text-2xl font-bold"><i class="fas fa-spin fa-circle-notch"></i> CARGANDO</div>
 </div>
 {:else if haveData == "ok"}
-<div class="pt-20 md:pt-0 max-w-screen-xl mx-auto relative grid sm:grid-cols-1 md:grid-cols-3 z-0" transition:fade>
+<div class="max-w-screen-xl mx-auto pt-24 relative grid sm:grid-cols-1 md:grid-cols-3 z-0" transition:fade>
 
 {#if modal}
   {#if isFreqModal}
