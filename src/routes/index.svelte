@@ -108,6 +108,11 @@
 </script>
 
 <svelte:head>
+  <!-- Apple Meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <meta name="apple-mobile-web-app-title" content="BNDS">
   <title>BNDS.cl | 5G Ready!</title>
   <script src='https://www.google.com/recaptcha/api.js?render={variables.captchaSiteKey}'></script>
 </svelte:head>
