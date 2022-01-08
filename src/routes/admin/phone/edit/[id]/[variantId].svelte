@@ -107,6 +107,7 @@ async function fetchData(){
   enabled = variantData.enabled;
   ogVariantName = variantData.name;
   name = variantData.name;
+  comment = variantData.comment;
   return data;
 }
 let dataPromise = fetchData();
@@ -114,6 +115,7 @@ let dataPromise = fetchData();
 let saving = false;
 let saveText = "Guardar";
 let name;
+let comment;
 let enabled;
 let ogVariantName;
 
@@ -163,6 +165,7 @@ async function saveVariant(){
     },
     body: JSON.stringify({
       name: name,
+      comment: comment,
       ogName: ogVariantName,
       enabled: enabled,
       technologies: technologies,
@@ -195,6 +198,8 @@ async function saveVariant(){
           <div class="col-start-2 col-span-1 grid grid-cols-1">
             <label for="name" class="text-center mt-2">Nombre</label>
             <input type="text" id="opName" class="rounded-lg text-black mt-2" required bind:value={name}/>
+            <label for="comment" class="text-center mt-2">Comentario</label>
+            <input type="text" id="comment" class="rounded-lg text-black mt-2" placeholder="Ej.: No disponible en equipos importados" bind:value={comment}/>
             <div class="mt-2 mx-auto">
               <input type="checkbox" id="opEnabled" class="rounded my-2 align-middle" bind:checked={enabled}/>
               <label for="opEnabled" class="ml-2 my-2 align-middle">Activado</label>
