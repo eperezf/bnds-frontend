@@ -153,6 +153,17 @@ function noImage(){
         {#if phone.review}
           <div class="bg-blue-100 rounded-xl text-blue-700 border-2 border-blue-200 mx-auto py-2 px-2 mb-4">Leer Review</div>
         {/if}
+        {#if phone.phoneComment || phone.variantComment}
+          <div class="mb-4 p-2 bg-yellow-100 border-solid border-2 border-yellow-200 rounded-xl text-yellow-700 text-center">
+            <div class="text-yellow-600 text-xl font-bold text-center"><i class="fas fa-exclamation-triangle"></i> Importante:</div>
+            {#if phone.phoneComment}
+              <p class="my-2">{phone.phoneComment}</p>
+            {/if}
+            {#if phone.variantComment}
+              <p>{phone.variantComment}</p>
+            {/if}
+          </div>
+        {/if}
       </div>
       <div class="grid grid-cols-2 gap-4 md:hidden">
         {#each generations as generation, i}
