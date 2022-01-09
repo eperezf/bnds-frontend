@@ -46,8 +46,13 @@
   let searching = false;
   let done = false;
   let noneFound = false;
+  let onlyNumbers = false;
 
   async function fetchAutocomplete (query) {
+    if (/^\d+$/.test(query) && query.length > 5) {
+      noneFound = true;
+      onlyNumbers = true;
+    }
     if (phone) {
       if (phone.length > 0) {
         searching = true;
@@ -78,8 +83,7 @@
   }
 
   function setVars(){
-    if (!phone) {
-      //console.log("PHONE EMPTY!");
+    if (!phone || operator == "Cargando...") {
     } else {
       grecaptcha.ready(function() {
         grecaptcha.execute(variables.captchaSiteKey, {action: 'submit'}).then(function(token) {
@@ -127,10 +131,11 @@
     <form method="get" action="/result">
       <div class="bg-white p-4 m-4 rounded-lg grid shadow-lg">
         <label for="operator" class="text-center">Selecciona tu operadora:</label>
-          <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2" disabled={unfilled} on:change={setOperator}>
+          <select name="operator" id="operator" bind:value={operator} class="rounded-lg mb-4 mt-2" disabled={unfilled} on:change={setOperator} required>
           {#await operatorPromise}
             <option>Cargando...</option>
           {:then operators}
+              <option value="null" selected disabled hidden>Selecciona una operadora...</option>
             {#each operators as operator}
               <option value={operator.id}>{operator.name}</option>
             {/each}
@@ -152,9 +157,14 @@
                   <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg" on:click={()=>setPhone(phoneSug)}>{phoneSug}</p>
                 {/each}
               {:else}
-                <a href="https://twitter.com/bndscl" target="_blank">
-                  <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg text-sm">No encontramos tu teléfono. ¡Avísanos! <i class="fab fa-twitter"></i></p>
-                </a>
+                {#if onlyNumbers}
+                  <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg text-sm">Placeholder only numbers</p>
+                {:else}
+                  <a href="https://twitter.com/bndscl" target="_blank">
+                    <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg text-sm">No encontramos tu teléfono. ¡Avísanos! <i class="fab fa-twitter"></i></p>
+                  </a>
+                {/if}
+
               {/if}
             </div>
           {/if}
