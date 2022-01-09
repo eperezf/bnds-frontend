@@ -151,7 +151,7 @@ function noImage(){
       </div>
       <div class="flex flex-col">
         {#if phone.review}
-          <div class="bg-blue-100 rounded-xl text-blue-700 border-2 border-blue-200 mx-auto py-2 px-2 mb-4">Leer Review</div>
+            <a href="{phone.review}" target="_blank" class="bg-blue-100 rounded-xl text-blue-700 border-2 border-blue-200 mx-auto py-2 px-2 mb-4">Leer Review</a>
         {/if}
         {#if phone.phoneComment || phone.variantComment}
           <div class="mb-4 p-2 bg-yellow-100 border-solid border-2 border-yellow-200 rounded-xl text-yellow-700 text-center">
