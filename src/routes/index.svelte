@@ -158,7 +158,7 @@
                 {/each}
               {:else}
                 {#if onlyNumbers}
-                  <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg text-sm">Placeholder only numbers</p>
+                  <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg text-sm">Debes ingresar la marca, modelo y variante de tu teléfono, no el número.</p>
                 {:else}
                   <a href="https://twitter.com/bndscl" target="_blank">
                     <p class="p-4 hover:bg-green-200 transition-all cursor-pointer first:rounded-t-lg last:rounded-b-lg text-sm">No encontramos tu teléfono. ¡Avísanos! <i class="fab fa-twitter"></i></p>
