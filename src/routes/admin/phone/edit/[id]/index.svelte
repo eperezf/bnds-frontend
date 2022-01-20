@@ -13,6 +13,7 @@ let imageExists = false;
 onMount(async()=>{
   loggedIn = await checkToken();
 });
+const timeOptions = {year: 'numeric', month: '2-digit', day: 'numeric', hour: 'numeric', minute: 'numeric'};
 
 async function fetchData(){
   const res = await fetch(
@@ -36,6 +37,28 @@ async function fetchData(){
     comment = data.phone.comment;
     enabled = data.phone.enabled;
     phoneId = data.phone.id;
+    createdBy = data.phone.createdBy;
+    createdAt = data.phone.createdAt;
+    updatedBy = data.phone.updatedBy;
+    updatedAt = data.phone.updatedAt;
+
+    if (updatedAt) {
+      updatedAt = new Date(updatedAt).toLocaleDateString("es-ES", timeOptions);
+    } else {
+      updatedAt = "???"
+    }
+    if (createdAt) {
+      createdAt = new Date(createdAt).toLocaleDateString("es-ES", timeOptions);
+    } else {
+      createdAt = "???"
+    }
+
+    if (!createdBy) {
+      createdBy = "???";
+    }
+    if (!updatedBy) {
+      updatedBy = "???";
+    }
   }
   return data;
 }
@@ -50,6 +73,10 @@ let review = "Cargando...";
 let comment = "Cargando...";
 let phoneId;
 let enabled;
+let createdBy = "Cargando...";
+let createdAt = "Cargando...";
+let updatedBy = "Cargando...";
+let updatedAt = "Cargando...";
 
 async function saveSmartphone(){
   let error = false;
@@ -153,6 +180,10 @@ function noImage(){
               <label for="enabled" class="ml-2 my-2 align-middle">Activado</label>
             </div>
             <button type="submit" class=" w-32 mx-auto mt-4 rounded-lg p-2 bg-green-600 hover:bg-green-500 shadow transition-all" disabled={saving}>{saveText}</button>
+            <div class="">Creado por: {createdBy}</div>
+            <div class="">Fecha de creación: {createdAt}</div>
+            <div class="">Editado por: {updatedBy}</div>
+            <div class="">Fecha de última edición: {updatedAt}</div>
           </form>
         </div>
       </div>
